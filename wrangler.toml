@@ -6,4 +6,4 @@ compatibility_date = "2024-09-23"
 # Paste the returned id below, then `wrangler deploy`.
 [[kv_namespaces]]
 binding = "MARSH_KV"
-id = "PASTE_KV_NAMESPACE_ID_HERE"
+id = "0281e95521524415ac8d5aa9775043c2"
