@@ -18,9 +18,19 @@
   .frame:hover{ transform:rotate(0deg) translateY(-3px) !important; box-shadow:8px 8px 0 #cc2326 !important; z-index:3; }
 </style>
 <script src="image-slot.js"></script>
+<script src="marsh-backend.js"></script>
+<script src="marsh-skins.js"></script>
 </helmet>
 <div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
   <div style="max-width:1160px; margin:0 auto;">
+
+    <sc-if value="{{ pageOff }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed; inset:0; z-index:999990; background:#171411; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; font-family:'Special Elite',monospace;">
+        <div style="font-family:'Permanent Marker',cursive; font-size:34px; color:#cc2326;">this page is turned off ✕</div>
+        <div style="font-family:'VT323',monospace; font-size:18px; color:#9c948a; margin-top:10px;">marsh has the gallery hidden right now.</div>
+        <a href="MARSH Home.dc.html" style="margin-top:18px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:10px 16px; border:2px solid #ece6d8; text-decoration:none;">◂ BACK HOME</a>
+      </div>
+    </sc-if>
 
     <!-- HEADER -->
     <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
@@ -124,6 +134,9 @@ class Component extends DCLogic {
     ];
     this.state = { filter:'all' };
   }
+  componentDidMount(){ this.waitDB(0); }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
+  waitDB(n){ if(window.MarshDB){ this.unsub=window.MarshDB.subscribe(()=>this.forceUpdate()); this.forceUpdate(); } else if(n<80){ setTimeout(()=>this.waitDB(n+1),60); } }
   renderVals(){
     const f=this.state.filter;
     const pieces=this.all.filter(p=>f==='all'||p.tag===f).map(p=>({
@@ -135,7 +148,7 @@ class Component extends DCLogic {
       return { label:c.label, pick:()=>this.setState({filter:c.id}),
         style:{ cursor:'pointer', fontFamily:"'Archivo Black',sans-serif", fontSize:'12px', letterSpacing:'0.5px', padding:'8px 12px', border:'2px solid #100e0c', background:on?'#cc2326':'#ece6d8', color:on?'#ece6d8':'#100e0c' } };
     });
-    return { pieces, chips, noneShown:pieces.length===0 };
+    return { pageOff: window.MarshDB ? !window.MarshDB.pageEnabled('gallery') : false, pieces, chips, noneShown:pieces.length===0 };
   }
 }
 </script>

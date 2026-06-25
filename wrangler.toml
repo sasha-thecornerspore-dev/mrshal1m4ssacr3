@@ -1,0 +1,9 @@
+name = "marsh"
+main = "marsh-worker.js"
+compatibility_date = "2024-09-23"
+
+# Created by: wrangler kv namespace create MARSH_KV
+# Paste the returned id below, then `wrangler deploy`.
+[[kv_namespaces]]
+binding = "MARSH_KV"
+id = "PASTE_KV_NAMESPACE_ID_HERE"

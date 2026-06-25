@@ -20,9 +20,19 @@
   input,textarea{ font-family:'VT323',monospace; }
   input[type=number]{ -moz-appearance:textfield; }
 </style>
+<script src="marsh-backend.js"></script>
+<script src="marsh-skins.js"></script>
 </helmet>
 <div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
   <div style="max-width:1160px; margin:0 auto;">
+
+    <sc-if value="{{ pageOff }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed; inset:0; z-index:999990; background:#171411; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; font-family:'Special Elite',monospace;">
+        <div style="font-family:'Permanent Marker',cursive; font-size:34px; color:#cc2326;">this page is turned off ✕</div>
+        <div style="font-family:'VT323',monospace; font-size:18px; color:#9c948a; margin-top:10px;">marsh has the outlet hidden right now.</div>
+        <a href="MARSH Home.dc.html" style="margin-top:18px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:10px 16px; border:2px solid #ece6d8; text-decoration:none;">◂ BACK HOME</a>
+      </div>
+    </sc-if>
 
     <!-- HEADER -->
     <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
@@ -280,7 +290,10 @@ class Component extends DCLogic {
     try{ cart=JSON.parse(localStorage.getItem('marsh_cart_v1')||'{}')||{}; }catch(e){}
     try{ wall=JSON.parse(localStorage.getItem('marsh_wall_v1')||'[]')||[]; }catch(e){}
     this.setState({ cart, wall });
+    this.waitDB(0);
   }
+  waitDB(n){ if(window.MarshDB){ this.unsub=window.MarshDB.subscribe(()=>this.forceUpdate()); this.forceUpdate(); } else if(n<80){ setTimeout(()=>this.waitDB(n+1),60); } }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
   saveCart(cart){ try{ localStorage.setItem('marsh_cart_v1',JSON.stringify(cart)); }catch(e){} }
   saveWall(wall){ try{ localStorage.setItem('marsh_wall_v1',JSON.stringify(wall)); }catch(e){} }
 
@@ -353,6 +366,7 @@ class Component extends DCLogic {
     }));
     const seed=this.state.seed;
     return {
+      pageOff: window.MarshDB ? !window.MarshDB.pageEnabled('outlet') : false,
       products,
       cartCount:this.cartCount(), cartLines, subtotal:'$'+subNum,
       cartEmpty:cartLines.length===0, cartOpen:!this.state.checkedOut, checkedOut:this.state.checkedOut,

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#100e0c; }
+  ::selection{ background:#cc2326; color:#ece6d8; }
+  @keyframes marq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  a.np:hover{ background:#cc2326 !important; color:#ece6d8 !important; }
+</style>
+<script src="marsh-backend.js"></script>
+<script src="marsh-skins.js"></script>
+<script async defer src="https://assets.pinterest.com/js/pinit.js"></script>
+</helmet>
+<div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
+  <div style="max-width:1160px; margin:0 auto;">
+
+    <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
+      <div style="display:flex; align-items:stretch; justify-content:space-between; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <a href="MARSH Home.dc.html" style="text-decoration:none; font-family:'Archivo Black',sans-serif; color:#ece6d8; font-size:34px; letter-spacing:-1px; transform:skewX(-6deg); line-height:1;">★MARSH<span style="color:#cc2326;">‼</span>★</a>
+          <div style="font-family:'VT323',monospace; color:#9c948a; font-size:16px; line-height:1.05; align-self:center;">the pin wall<br>// straight from pinterest</div>
+        </div>
+        <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <a href="MARSH Home.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">HOME</a>
+          <a href="MARSH Demo Tape.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">DEMO TAPE</a>
+          <a href="MARSH Outlet.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">OUTLET</a>
+          <a href="MARSH Gallery.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">GALLERY</a>
+          <span style="font-family:'Archivo Black',sans-serif; font-size:13px; background:#cc2326; color:#ece6d8; padding:9px 12px; border:2px solid #ece6d8;">★ PINS</span>
+        </nav>
+      </div>
+      <div style="overflow:hidden; background:#cc2326; border-top:3px solid #ece6d8; white-space:nowrap;">
+        <div style="display:inline-block; animation:marq 24s linear infinite; font-family:'VT323',monospace; font-size:17px; color:#ece6d8; padding:4px 0;">
+          <span style="padding:0 22px;">★ my pinterest boards ★ inspo + refs + scene stuff ★ live from @mrshal1m4ssacr3 ★ look but credit ★ no AI scraping ★&nbsp;</span><span style="padding:0 22px;">★ my pinterest boards ★ inspo + refs + scene stuff ★ live from @mrshal1m4ssacr3 ★ look but credit ★ no AI scraping ★&nbsp;</span>
+        </div>
+      </div>
+    </header>
+
+    <sc-if value="{{ pageOff }}" hint-placeholder-val="{{ false }}">
+      <div style="border:3px solid #100e0c; background:#171411; box-shadow:7px 7px 0 #cc2326; padding:60px 24px; text-align:center;">
+        <div style="font-family:'Permanent Marker',cursive; font-size:30px; color:#cc2326;">this page is turned off ✕</div>
+        <div style="font-family:'VT323',monospace; font-size:18px; color:#9c948a; margin-top:10px;">marsh has the pin wall hidden right now.</div>
+        <a href="MARSH Home.dc.html" style="display:inline-block; margin-top:18px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:10px 16px; border:2px solid #ece6d8; text-decoration:none;">◂ BACK HOME</a>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pageOn }}" hint-placeholder-val="{{ true }}">
+      <section data-screen-label="Pin wall" style="border:3px solid #100e0c; background:#fffdf6; box-shadow:7px 7px 0 #100e0c;">
+        <div style="background:#100e0c; color:#ece6d8; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span style="font-family:'Archivo Black',sans-serif; font-size:18px;">★ MY PINTEREST</span>
+          <a class="np" href="{{ profileUrl }}" target="_blank" rel="noopener" style="font-family:'VT323',monospace; font-size:16px; color:#100e0c; background:#dfd6c2; border:2px solid #ece6d8; padding:5px 11px; text-decoration:none;">open on pinterest ▸</a>
+        </div>
+        <div style="padding:18px;">
+          <div ref="{{ widgetRef }}" style="min-height:360px; display:flex; align-items:center; justify-content:center;">
+            <div style="font-family:'VT323',monospace; font-size:18px; color:#100e0c99; text-align:center; line-height:1.5;">{{ status }}<br><span style="font-size:14px; color:#cc2326;">{{ statusSub }}</span></div>
+          </div>
+        </div>
+        <div style="padding:12px 16px; background:#dfd6c2; border-top:3px solid #100e0c; font-family:'VT323',monospace; font-size:15px; color:#100e0c;">↳ this grid is pulled live by pinterest's own widget — no server needed. marsh sets which profile in admin.</div>
+      </section>
+    </sc-if>
+
+    <footer style="margin-top:26px; border:3px solid #100e0c; background:#100e0c; overflow:hidden; white-space:nowrap;">
+      <div style="display:inline-block; animation:marq 26s linear infinite; font-family:'VT323',monospace; font-size:18px; color:#ece6d8; padding:7px 0;">
+        <span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span><span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:760}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.widgetRef = React.createRef();
+    this.state = { ready:false, profileUrl:'', pageOff:false };
+    this.built = '';
+  }
+  componentDidMount(){ this.waitDB(0); }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
+  waitDB(n){
+    if(window.MarshDB){
+      this.unsub = window.MarshDB.subscribe(()=>this.sync());
+      this.sync();
+      this.setState({ ready:true });
+    } else if(n<80){ setTimeout(()=>this.waitDB(n+1),60); }
+  }
+  sync(){
+    const DB=window.MarshDB; if(!DB) return;
+    const cfg=DB.pinsCfg();
+    const off=!DB.pageEnabled('pins');
+    this.setState({ profileUrl:cfg.profileUrl||'', pageOff:off }, ()=>this.buildWidget());
+  }
+  buildWidget(n){
+    n=n||0;
+    if(this.state.pageOff) return;
+    const host=this.widgetRef.current;
+    const url=this.state.profileUrl;
+    if(!host) { if(n<40) setTimeout(()=>this.buildWidget(n+1),80); return; }
+    if(!url){ host.innerHTML='<div style="font-family:VT323,monospace; font-size:18px; color:#100e0c99; text-align:center;">no pinterest profile set yet.<br><span style="font-size:14px; color:#cc2326;">marsh: add it in ADMIN → pins source.</span></div>'; return; }
+    if(!window.PinUtils){ if(n<60){ setTimeout(()=>this.buildWidget(n+1),120); } return; }
+    const key=url;
+    if(this.built===key && host.querySelector('span[data-pin-href], iframe')) return;
+    this.built=key;
+    host.innerHTML='<a data-pin-do="embedUser" data-pin-board-width="1040" data-pin-scale-height="400" data-pin-scale-width="80" href="'+url+'"></a>';
+    try{ window.PinUtils.build(host); }catch(e){}
+  }
+  renderVals(){
+    return {
+      pageOff:this.state.pageOff,
+      pageOn:!this.state.pageOff,
+      profileUrl:this.state.profileUrl || 'https://www.pinterest.com/',
+      widgetRef:this.widgetRef,
+      status: this.state.profileUrl ? 'loading pins from pinterest…' : 'no profile set yet',
+      statusSub: this.state.profileUrl ? 'if it stays blank, pinterest may be blocking the embed — use the link above' : 'marsh: set it in admin',
+    };
+  }
+}
+</script>
+</body>
+</html>

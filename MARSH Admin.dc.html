@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#100e0c; }
+  ::selection{ background:#cc2326; color:#ece6d8; }
+  @keyframes marq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  .ad-in{ font-family:'VT323',monospace; font-size:17px; padding:8px 10px; border:2px solid #5a5147; background:#0c0a08; color:#ece6d8; width:100%; }
+  .ad-in::placeholder{ color:#6f675c; }
+  .ad-sel{ font-family:'VT323',monospace; font-size:16px; padding:7px 8px; border:2px solid #5a5147; background:#0c0a08; color:#ece6d8; }
+</style>
+<script src="marsh-backend.js"></script>
+<script src="marsh-skins.js"></script>
+</helmet>
+<div style="min-height:100vh; background:#171411; background-image:radial-gradient(#ffffff08 1px,transparent 1.4px); background-size:6px 6px; padding:26px 18px 70px; font-family:'Special Elite',monospace; color:#ece6d8;">
+  <div style="max-width:1080px; margin:0 auto;">
+
+    <header style="border:3px solid #ece6d8; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <a href="MARSH Home.dc.html" style="text-decoration:none; font-family:'Archivo Black',sans-serif; color:#ece6d8; font-size:30px; letter-spacing:-1px; transform:skewX(-6deg); line-height:1;">★MARSH<span style="color:#cc2326;">‼</span>★</a>
+          <span style="font-family:'Archivo Black',sans-serif; font-size:16px; color:#cc2326;">⚙ CONTROL ROOM</span>
+        </div>
+        <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <a href="MARSH Home.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">◂ SITE</a>
+          <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:'VT323',monospace; font-size:15px; color:#9c948a;">@{{ myName }}</span>
+            <span style="{{ myBadgeStyle }}">{{ myRole }}</span>
+            <button onClick="{{ logout }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:14px; color:#ece6d8; background:none; border:1px solid #9c948a; padding:4px 9px;">log out</button>
+          </sc-if>
+        </nav>
+      </div>
+    </header>
+
+    <!-- LOGIN GATE -->
+    <sc-if value="{{ gated }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:380px; margin:50px auto; border:3px solid #ece6d8; background:#100e0c; box-shadow:7px 7px 0 #cc2326; padding:22px;">
+        <div style="font-family:'Archivo Black',sans-serif; font-size:18px; color:#cc2326;">★ STAFF LOGIN</div>
+        <div style="font-family:'VT323',monospace; font-size:15px; color:#9c948a; margin:6px 0 14px;">admin is for marsh + mods only.</div>
+        <form onSubmit="{{ submitAuth }}" style="display:flex; flex-direction:column; gap:9px;">
+          <input value="{{ authU }}" onInput="{{ setAuthU }}" placeholder="username" class="ad-in" autoComplete="off">
+          <input value="{{ authP }}" onInput="{{ setAuthP }}" placeholder="password" type="password" class="ad-in">
+          <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">‼ {{ err }}</div></sc-if>
+          <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:3px solid #ece6d8; padding:11px 0;">★ LOG IN</button>
+        </form>
+        <div style="font-family:'VT323',monospace; font-size:13px; color:#6f675c; margin-top:12px;">demo owner: marsh / marsh · mod: voidkitten / meow</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ notStaff }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:460px; margin:50px auto; border:3px dashed #cc2326; padding:30px; text-align:center;">
+        <div style="font-family:'Permanent Marker',cursive; font-size:24px; color:#cc2326;">staff only ✕</div>
+        <div style="font-family:'VT323',monospace; font-size:17px; color:#9c948a; margin-top:8px;">@{{ myName }} — your account isn't a mod or owner.</div>
+        <button onClick="{{ logout }}" style="cursor:pointer; margin-top:16px; font-family:'VT323',monospace; font-size:15px; color:#ece6d8; background:#3a342c; border:2px solid #5a5147; padding:8px 14px;">log out</button>
+      </div>
+    </sc-if>
+
+    <!-- PANELS -->
+    <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:18px;">
+
+        <!-- PAGES -->
+        <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #ece6d8;">
+          <div style="background:#cc2326; color:#ece6d8; padding:10px 15px; font-family:'Archivo Black',sans-serif; font-size:15px;">① PAGES — turn sections on / off</div>
+          <div style="padding:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <sc-for list="{{ pageRows }}" as="pg" hint-placeholder-count="5">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; background:#0c0a08; border:2px solid #2a251f;">
+                <div>
+                  <div style="font-family:'Archivo Black',sans-serif; font-size:13px;">{{ pg.label }}</div>
+                  <div style="font-family:'VT323',monospace; font-size:13px; color:#9c948a;">{{ pg.note }}</div>
+                </div>
+                <button onClick="{{ pg.toggle }}" style="{{ pg.btnStyle }}">{{ pg.btnLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- THEMING -->
+        <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #cc2326;">
+          <div style="background:#ece6d8; color:#100e0c; padding:10px 15px; font-family:'Archivo Black',sans-serif; font-size:15px;">② SKINS — let users reskin the site</div>
+          <div style="padding:15px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding-bottom:12px; border-bottom:2px dashed #3a342c;">
+              <div>
+                <div style="font-family:'Archivo Black',sans-serif; font-size:13px;">let visitors pick their own skin</div>
+                <div style="font-family:'VT323',monospace; font-size:13px; color:#9c948a;">off = everyone gets the site default (unless you assigned them one)</div>
+              </div>
+              <button onClick="{{ toggleAllowUser }}" style="{{ allowUserStyle }}">{{ allowUserLabel }}</button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
+              <span style="font-family:'VT323',monospace; font-size:16px; color:#9c948a;">SITE DEFAULT:</span>
+              <select value="{{ siteDefault }}" onChange="{{ setSiteDefault }}" class="ad-sel">
+                <sc-for list="{{ skinOpts }}" as="s" hint-placeholder-count="6"><option value="{{ s.id }}">{{ s.label }}</option></sc-for>
+              </select>
+            </div>
+
+            <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a; margin:16px 0 8px;">SKINS OFFERED TO USERS — turn on one or many:</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px;">
+              <sc-for list="{{ skinRows }}" as="s" hint-placeholder-count="6">
+                <button onClick="{{ s.toggle }}" style="{{ s.style }}">
+                  <span style="{{ s.swatchStyle }}"></span>
+                  <span style="flex:1; text-align:left;"><span style="font-family:'Archivo Black',sans-serif; font-size:12px;">{{ s.label }}</span><br><span style="font-family:'VT323',monospace; font-size:13px; color:#9c948a;">{{ s.hint }}</span></span>
+                  <span style="font-family:'Archivo Black',sans-serif; font-size:12px; color:{{ s.markColor }};">{{ s.mark }}</span>
+                </button>
+              </sc-for>
+            </div>
+
+            <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a; margin:18px 0 8px;">ASSIGN / LOCK A SKIN TO A USER:</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <sc-for list="{{ userSkinRows }}" as="u" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:9px 12px; background:#0c0a08; border:2px solid #2a251f;">
+                  <span style="font-family:'Special Elite',monospace; font-size:15px; min-width:110px;">@{{ u.username }}</span>
+                  <select value="{{ u.skin }}" onChange="{{ u.setSkin }}" class="ad-sel">
+                    <option value="">— none (use default) —</option>
+                    <sc-for list="{{ u.opts }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                  </select>
+                  <label style="display:flex; align-items:center; gap:5px; font-family:'VT323',monospace; font-size:15px; color:{{ u.lockColor }}; cursor:pointer;">
+                    <input type="checkbox" checked="{{ u.lock }}" onChange="{{ u.setLock }}" style="width:16px; height:16px; accent-color:#cc2326;"> lock it
+                  </label>
+                  <span style="font-family:'VT323',monospace; font-size:13px; color:#6f675c;">{{ u.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <!-- PINS -->
+        <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #ece6d8;">
+          <div style="background:#cc2326; color:#ece6d8; padding:10px 15px; font-family:'Archivo Black',sans-serif; font-size:15px;">③ PINS SOURCE — pinterest</div>
+          <div style="padding:15px; display:flex; flex-direction:column; gap:13px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span style="font-family:'VT323',monospace; font-size:16px; color:#9c948a;">MODE:</span>
+              <button onClick="{{ setModeWidget }}" style="{{ modeWidgetStyle }}">① widget (no server)</button>
+              <button onClick="{{ setModeApi }}" style="{{ modeApiStyle }}">② api (your worker)</button>
+            </div>
+            <div>
+              <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">PROFILE URL <span style="color:#9c948a;">— used by the widget page</span></div>
+              <input value="{{ profileUrl }}" onInput="{{ setProfileUrl }}" placeholder="https://www.pinterest.com/yourname/" class="ad-in" style="margin-top:4px;">
+            </div>
+            <div>
+              <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">WORKER ENDPOINT URL <span style="color:#9c948a;">— used by the api page</span></div>
+              <input value="{{ endpoint }}" onInput="{{ setEndpoint }}" placeholder="https://marsh-pins.you.workers.dev" class="ad-in" style="margin-top:4px;">
+            </div>
+            <div>
+              <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">FEED KEY <span style="color:#9c948a;">— optional; the real pinterest token lives in cloudflare, NOT here</span></div>
+              <input value="{{ apiKey }}" onInput="{{ setApiKey }}" placeholder="(optional x-api-key for your worker)" class="ad-in" style="margin-top:4px;">
+            </div>
+            <div style="font-family:'VT323',monospace; font-size:14px; color:#9c948a; line-height:1.5; background:#0c0a08; border:2px solid #2a251f; padding:10px 12px;">↳ to get pins in marsh's own style: deploy <b style="color:#ece6d8;">marsh-pins-worker.js</b> to cloudflare, set the PINTEREST_TOKEN secret there, paste the worker URL above. the widget option needs none of this.</div>
+          </div>
+        </section>
+
+        <!-- TRACKS -->
+        <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #cc2326;">
+          <div style="background:#ece6d8; color:#100e0c; padding:10px 15px; font-family:'Archivo Black',sans-serif; font-size:15px;">④ DEMO-TAPE TRACK SLOTS</div>
+          <div style="padding:15px; display:flex; flex-direction:column; gap:9px;">
+            <sc-for list="{{ trackRows }}" as="tr" hint-placeholder-count="5">
+              <div style="display:grid; grid-template-columns:24px 1fr 1fr 70px; gap:8px; align-items:center;">
+                <span style="font-family:'Archivo Black',sans-serif; font-size:14px; color:#cc2326;">{{ tr.num }}</span>
+                <input value="{{ tr.name }}" onInput="{{ tr.setName }}" class="ad-in" style="font-size:15px;">
+                <select value="{{ tr.preset }}" onChange="{{ tr.setPreset }}" class="ad-sel">
+                  <sc-for list="{{ tr.presetOpts }}" as="op" hint-placeholder-count="6"><option value="{{ op.id }}">{{ op.label }}</option></sc-for>
+                </select>
+                <input type="number" min="50" max="180" value="{{ tr.bpm }}" onInput="{{ tr.setBpm }}" class="ad-in" style="font-size:15px;">
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- USERS -->
+        <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #ece6d8;">
+          <div style="background:#cc2326; color:#ece6d8; padding:10px 15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+            <span style="font-family:'Archivo Black',sans-serif; font-size:15px;">⑤ USERS &amp; MODERATION</span>
+            <span style="font-family:'VT323',monospace; font-size:14px;">ban reason: <input value="{{ banReason }}" onInput="{{ setBanReason }}" placeholder="reason…" style="font-family:'VT323',monospace; font-size:14px; padding:3px 7px; border:2px solid #ece6d8; background:#0c0a08; color:#ece6d8; width:150px;"></span>
+          </div>
+          <div style="padding:15px; display:flex; flex-direction:column; gap:8px;">
+            <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="3">
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:9px 12px; background:#0c0a08; border:2px solid #2a251f;">
+                <span style="font-family:'Special Elite',monospace; font-size:15px;">@{{ u.username }}</span>
+                <span style="{{ u.badgeStyle }}">{{ u.role }}</span>
+                <sc-if value="{{ u.statusShown }}" hint-placeholder-val="{{ false }}"><span style="font-family:'VT323',monospace; font-size:13px; color:#cc2326;">{{ u.status }}</span></sc-if>
+                <div style="margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;">
+                  <sc-if value="{{ u.canPromote }}" hint-placeholder-val="{{ false }}"><button onClick="{{ u.toggleMod }}" style="{{ u.modBtnStyle }}">{{ u.modBtnLabel }}</button></sc-if>
+                  <sc-if value="{{ u.canAct }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ u.to10 }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#ece6d8; background:#3a342c; border:1px solid #5a5147; padding:3px 7px;">10m</button>
+                    <button onClick="{{ u.to60 }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#ece6d8; background:#3a342c; border:1px solid #5a5147; padding:3px 7px;">1h</button>
+                    <button onClick="{{ u.ban }}" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:11px; color:#ece6d8; background:#cc2326; border:1px solid #ece6d8; padding:3px 8px;">BAN</button>
+                    <button onClick="{{ u.unban }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#100e0c; background:#dfd6c2; border:1px solid #ece6d8; padding:3px 7px;">clear</button>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { ready:false, authU:'', authP:'', err:'', banReason:'' };
+  }
+  componentDidMount(){ this.waitDB(0); }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
+  waitDB(n){
+    if(window.MarshDB){
+      this.unsub = window.MarshDB.subscribe(()=>this.forceUpdate());
+      this.setState({ ready:true });
+    } else if(n<80){ setTimeout(()=>this.waitDB(n+1),60); }
+  }
+  DB(){ return window.MarshDB; }
+  skinMeta(){
+    const MS=window.MarshSkins;
+    if(MS) return MS.ORDER.map(id=>({ id, label:MS.SKINS[id].label, hint:MS.SKINS[id].hint, swatch:MS.SKINS[id].swatch }));
+    return [{id:'blood',label:'★ BLOOD',hint:'default',swatch:'#cc2326'}];
+  }
+  submitAuth(e){
+    e.preventDefault();
+    const DB=this.DB(); if(!DB) return;
+    const r=DB.login(this.state.authU,this.state.authP);
+    if(r.ok) this.setState({ authU:'', authP:'', err:'' });
+    else this.setState({ err:r.error });
+  }
+  badge(role){
+    const base={ fontFamily:"'Archivo Black',sans-serif", fontSize:'9px', letterSpacing:'0.5px', padding:'2px 6px', textTransform:'uppercase' };
+    if(role==='owner') return {...base, background:'#cc2326', color:'#ece6d8'};
+    if(role==='mod') return {...base, background:'#ece6d8', color:'#100e0c'};
+    return {...base, background:'#3a342c', color:'#ece6d8'};
+  }
+  toggleBtn(on){
+    return { cursor:'pointer', fontFamily:"'Archivo Black',sans-serif", fontSize:'12px', letterSpacing:'0.5px', padding:'8px 14px', border:'2px solid #ece6d8', minWidth:'66px', background:on?'#cc2326':'#0c0a08', color:on?'#ece6d8':'#6f675c' };
+  }
+
+  renderVals(){
+    const DB=this.DB();
+    if(!this.state.ready || !DB){
+      return { gated:true, isStaff:false, notStaff:false, loggedIn:false, hasErr:false, authU:this.state.authU, authP:this.state.authP,
+        setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}), submitAuth:(e)=>this.submitAuth(e), err:'', myBadgeStyle:{},
+        pageRows:[], skinOpts:[], skinRows:[], userSkinRows:[], trackRows:[], userRows:[] };
+    }
+    const me=DB.me();
+    const loggedIn=!!me;
+    const isStaff=loggedIn && me.rank>=2;
+    const isOwner=loggedIn && me.rank>=3;
+
+    // PAGES
+    const pagesCfg=DB.pages();
+    const pageDefs=[
+      {k:'demo',label:'DEMO TAPE',note:'the cassette player'},
+      {k:'outlet',label:'THE OUTLET',note:'shop + makers'},
+      {k:'gallery',label:'THE GALLERY',note:'art wall'},
+      {k:'pins',label:'PINS (widget)',note:'pinterest embed — no server'},
+      {k:'pinsapi',label:'PIN FEED (api)',note:'your worker, marsh style'},
+    ];
+    const pageRows=pageDefs.map(d=>{
+      const on=pagesCfg[d.k]!==false;
+      return { label:d.label, note:d.note, btnLabel:on?'ON':'OFF', btnStyle:this.toggleBtn(on), toggle:()=>DB.setPage(d.k,!on) };
+    });
+
+    // SKINS
+    const sc=DB.skinsCfg();
+    const meta=this.skinMeta();
+    const skinOpts=meta.map(m=>({ id:m.id, label:m.label }));
+    const skinRows=meta.map(m=>{
+      const on=sc.allowed.indexOf(m.id)!==-1;
+      return { label:m.label, hint:m.hint, mark:on?'★ ON':'off', markColor:on?'#cc2326':'#6f675c',
+        swatchStyle:{ flex:'none', width:'20px', height:'20px', border:'2px solid #ece6d8', background:m.swatch },
+        style:{ cursor:'pointer', display:'flex', alignItems:'center', gap:'9px', padding:'9px 11px', border:'2px solid '+(on?'#cc2326':'#2a251f'), background:on?'#1d1813':'#0c0a08', color:'#ece6d8' },
+        toggle:()=>{ const a=sc.allowed.slice(); const i=a.indexOf(m.id); if(i===-1) a.push(m.id); else a.splice(i,1); if(!a.length) a.push(sc.siteDefault||'blood'); DB.setSkins({ allowed:a }); } };
+    });
+    const userSkinRows=DB.users().map(u=>{
+      const a=sc.perUser[u.username.toLowerCase()]||null;
+      return { username:u.username, skin:a?a.skin:'', lock:!!(a&&a.lock),
+        lockColor:(a&&a.lock)?'#cc2326':'#9c948a',
+        status:a?(a.lock?'locked':'default'):'',
+        opts:meta.map(m=>({ id:m.id, label:m.label })),
+        setSkin:(e)=>{ const v=e.target.value; DB.setUserSkin(u.username, v||null, a?a.lock:false); },
+        setLock:(e)=>{ const cur=sc.perUser[u.username.toLowerCase()]; if(cur&&cur.skin) DB.setUserSkin(u.username, cur.skin, e.target.checked); } };
+    });
+
+    // PINS
+    const pc=DB.pinsCfg();
+
+    // TRACKS
+    const presets=DB.presets();
+    const trackRows=DB.tracks().map(t=>({
+      num:String(t.slot+1).padStart(2,'0'), name:t.name, preset:t.preset, bpm:t.bpm,
+      presetOpts:presets.map(p=>({id:p.id,label:p.label})),
+      setName:(e)=>DB.setTrack(t.slot,{name:e.target.value}),
+      setPreset:(e)=>DB.setTrack(t.slot,{preset:e.target.value}),
+      setBpm:(e)=>DB.setTrack(t.slot,{bpm:e.target.value}),
+    }));
+
+    // USERS
+    const userRows=isStaff?DB.users().map(u=>{
+      const canAct=me.rank>u.rank;
+      const canPromote=isOwner && u.role!=='owner' && u.username.toLowerCase()!==me.username.toLowerCase();
+      const status=u.banned?(u.bannedUntil===-1?'BANNED ∞':'banned'):(u.timedOut?'timed out':'');
+      return { username:u.username, role:u.role, badgeStyle:this.badge(u.role), statusShown:!!status, status, canAct, canPromote,
+        modBtnLabel:u.role==='mod'?'remove mod':'make mod',
+        modBtnStyle:{ cursor:'pointer', fontFamily:"'Archivo Black',sans-serif", fontSize:'11px', color:'#100e0c', background:'#ece6d8', border:'1px solid #ece6d8', padding:'3px 8px' },
+        toggleMod:()=>DB.setRole(u.username, u.role==='mod'?'user':'mod'),
+        to10:()=>DB.timeoutUser(u.username,10), to60:()=>DB.timeoutUser(u.username,60),
+        ban:()=>DB.banUser(u.username,this.state.banReason,false), unban:()=>DB.unban(u.username),
+      };
+    }):[];
+
+    return {
+      gated:!loggedIn, notStaff:loggedIn&&!isStaff, isStaff,
+      loggedIn, myName:me?me.username:'', myRole:me?me.role:'', myBadgeStyle:me?this.badge(me.role):{},
+      logout:()=>DB.logout(),
+      authU:this.state.authU, authP:this.state.authP,
+      setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}),
+      submitAuth:(e)=>this.submitAuth(e), hasErr:!!this.state.err, err:this.state.err,
+
+      pageRows,
+
+      allowUserLabel:sc.allowUser?'ALLOWED':'LOCKED', allowUserStyle:this.toggleBtn(sc.allowUser),
+      toggleAllowUser:()=>DB.setSkins({ allowUser:!sc.allowUser }),
+      siteDefault:sc.siteDefault, setSiteDefault:(e)=>DB.setSkins({ siteDefault:e.target.value }),
+      skinOpts, skinRows, userSkinRows,
+
+      modeWidgetStyle:this.toggleBtn(pc.mode!=='api'), modeApiStyle:this.toggleBtn(pc.mode==='api'),
+      setModeWidget:()=>DB.setPinsCfg({mode:'widget'}), setModeApi:()=>DB.setPinsCfg({mode:'api'}),
+      profileUrl:pc.profileUrl, setProfileUrl:(e)=>DB.setPinsCfg({profileUrl:e.target.value}),
+      endpoint:pc.endpoint, setEndpoint:(e)=>DB.setPinsCfg({endpoint:e.target.value}),
+      apiKey:pc.apiKey, setApiKey:(e)=>DB.setPinsCfg({apiKey:e.target.value}),
+
+      trackRows,
+      banReason:this.state.banReason, setBanReason:(e)=>this.setState({banReason:e.target.value}),
+      userRows,
+    };
+  }
+}
+</script>
+</body>
+</html>

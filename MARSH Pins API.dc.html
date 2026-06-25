@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#100e0c; }
+  ::selection{ background:#cc2326; color:#ece6d8; }
+  @keyframes marq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  a.np:hover{ background:#cc2326 !important; color:#ece6d8 !important; }
+  .pinframe{ transition:transform .14s, box-shadow .14s; }
+  .pinframe:hover{ transform:translateY(-3px) !important; box-shadow:8px 8px 0 #cc2326 !important; z-index:2; }
+</style>
+<script src="marsh-backend.js"></script>
+<script src="marsh-skins.js"></script>
+</helmet>
+<div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
+  <div style="max-width:1160px; margin:0 auto;">
+
+    <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
+      <div style="display:flex; align-items:stretch; justify-content:space-between; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <a href="MARSH Home.dc.html" style="text-decoration:none; font-family:'Archivo Black',sans-serif; color:#ece6d8; font-size:34px; letter-spacing:-1px; transform:skewX(-6deg); line-height:1;">★MARSH<span style="color:#cc2326;">‼</span>★</a>
+          <div style="font-family:'VT323',monospace; color:#9c948a; font-size:16px; line-height:1.05; align-self:center;">pin feed (api)<br>// styled in marsh's look</div>
+        </div>
+        <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <a href="MARSH Home.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">HOME</a>
+          <a href="MARSH Demo Tape.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">DEMO TAPE</a>
+          <a href="MARSH Outlet.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">OUTLET</a>
+          <a href="MARSH Gallery.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">GALLERY</a>
+          <span style="font-family:'Archivo Black',sans-serif; font-size:13px; background:#cc2326; color:#ece6d8; padding:9px 12px; border:2px solid #ece6d8;">★ PIN FEED</span>
+        </nav>
+      </div>
+      <div style="overflow:hidden; background:#cc2326; border-top:3px solid #ece6d8; white-space:nowrap;">
+        <div style="display:inline-block; animation:marq 24s linear infinite; font-family:'VT323',monospace; font-size:17px; color:#ece6d8; padding:4px 0;">
+          <span style="padding:0 22px;">★ pins pulled through my own server ★ styled in the marsh look ★ no pinterest chrome ★ refresh to re-pull ★&nbsp;</span><span style="padding:0 22px;">★ pins pulled through my own server ★ styled in the marsh look ★ no pinterest chrome ★ refresh to re-pull ★&nbsp;</span>
+        </div>
+      </div>
+    </header>
+
+    <sc-if value="{{ pageOff }}" hint-placeholder-val="{{ false }}">
+      <div style="border:3px solid #100e0c; background:#171411; box-shadow:7px 7px 0 #cc2326; padding:60px 24px; text-align:center;">
+        <div style="font-family:'Permanent Marker',cursive; font-size:30px; color:#cc2326;">this page is turned off ✕</div>
+        <div style="font-family:'VT323',monospace; font-size:18px; color:#9c948a; margin-top:10px;">marsh has the api pin feed hidden right now.</div>
+        <a href="MARSH Home.dc.html" style="display:inline-block; margin-top:18px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:10px 16px; border:2px solid #ece6d8; text-decoration:none;">◂ BACK HOME</a>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pageOn }}" hint-placeholder-val="{{ true }}">
+      <section data-screen-label="Pin feed">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+          <div>
+            <h1 style="font-family:'Archivo Black',sans-serif; font-size:32px; margin:0; transform:skewX(-6deg); line-height:1;">★ PIN FEED</h1>
+            <div style="font-family:'VT323',monospace; font-size:16px; color:#cc2326; margin-top:5px;">{{ subtitle }}</div>
+          </div>
+          <button onClick="{{ reload }}" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:12px; color:#ece6d8; background:#100e0c; border:3px solid #100e0c; box-shadow:4px 4px 0 #cc2326; padding:10px 14px;">⟳ RE-PULL</button>
+        </div>
+
+        <sc-if value="{{ stateLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="border:3px solid #100e0c; background:#fffdf6; box-shadow:6px 6px 0 #100e0c; padding:60px; text-align:center;">
+            <div style="width:34px; height:34px; border:5px solid #100e0c; border-top-color:#cc2326; border-radius:50%; margin:0 auto; animation:spin 0.8s linear infinite;"></div>
+            <div style="font-family:'VT323',monospace; font-size:18px; color:#100e0c99; margin-top:14px;">pulling pins from the server…</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stateEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="border:3px dashed #100e0c; background:#fffdf6; padding:34px;">
+            <div style="font-family:'Archivo Black',sans-serif; font-size:20px; color:#100e0c;">⚙ AWAITING YOUR FEED</div>
+            <div style="font-family:'VT323',monospace; font-size:17px; line-height:1.5; color:#100e0c; margin-top:10px; max-width:680px;">
+              this page renders pins in marsh's own style — but it needs a live endpoint to pull them from.
+              deploy the cloudflare worker (file: <b>marsh-pins-worker.js</b>), then paste its URL into
+              <b>ADMIN → pins source → worker endpoint</b>. the worker returns JSON like:
+            </div>
+            <pre style="font-family:'VT323',monospace; font-size:15px; background:#100e0c; color:#9fd; padding:12px 14px; margin-top:12px; overflow:auto; border:2px solid #100e0c;">{ "pins": [ { "image": "...", "link": "...", "title": "..." } ] }</pre>
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326; margin-top:10px;">endpoint set: <b>{{ endpointLabel }}</b></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stateError }}" hint-placeholder-val="{{ false }}">
+          <div style="border:3px solid #cc2326; background:#f4cfce; padding:24px;">
+            <div style="font-family:'Archivo Black',sans-serif; font-size:17px; color:#8f1417;">‼ couldn't reach the feed</div>
+            <div style="font-family:'VT323',monospace; font-size:16px; color:#8f1417; margin-top:8px; word-break:break-word;">{{ errMsg }}</div>
+            <div style="font-family:'VT323',monospace; font-size:14px; color:#100e0c99; margin-top:8px;">check the worker URL in admin, that it's deployed, and that PINTEREST_TOKEN is set.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stateOk }}" hint-placeholder-val="{{ false }}">
+          <div style="columns:4 230px; column-gap:18px;">
+            <sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+              <a class="pinframe" href="{{ p.link }}" target="_blank" rel="noopener" style="display:block; break-inside:avoid; margin-bottom:18px; text-decoration:none; background:#fffdf6; border:3px solid #100e0c; box-shadow:5px 5px 0 #100e0c; padding:8px 8px 0;">
+                <img src="{{ p.image }}" referrerPolicy="no-referrer" alt="{{ p.title }}" style="display:block; width:100%; border:2px solid #100e0c; background:#dfd6c2;">
+                <div style="padding:8px 2px 10px; font-family:'Permanent Marker',cursive; font-size:15px; color:#100e0c; line-height:1.1;">{{ p.title }}</div>
+              </a>
+            </sc-for>
+          </div>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <footer style="margin-top:26px; border:3px solid #100e0c; background:#100e0c; overflow:hidden; white-space:nowrap;">
+      <div style="display:inline-block; animation:marq 26s linear infinite; font-family:'VT323',monospace; font-size:18px; color:#ece6d8; padding:7px 0;">
+        <span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span><span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:820}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { ready:false, pageOff:false, phase:'empty', pins:[], err:'', endpoint:'', apiKey:'' };
+  }
+  componentDidMount(){ this.waitDB(0); }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
+  waitDB(n){
+    if(window.MarshDB){
+      this.unsub = window.MarshDB.subscribe(()=>this.sync());
+      this.sync(true);
+      this.setState({ ready:true });
+    } else if(n<80){ setTimeout(()=>this.waitDB(n+1),60); }
+  }
+  sync(initial){
+    const DB=window.MarshDB; if(!DB) return;
+    const cfg=DB.pinsCfg();
+    const off=!DB.pageEnabled('pinsapi');
+    const changed = cfg.endpoint!==this.state.endpoint || cfg.apiKey!==this.state.apiKey;
+    this.setState({ pageOff:off, endpoint:cfg.endpoint||'', apiKey:cfg.apiKey||'' }, ()=>{
+      if(!off && (initial || changed)) this.load();
+    });
+  }
+  load(){
+    const url=this.state.endpoint;
+    if(!url){ this.setState({ phase:'empty', pins:[], err:'' }); return; }
+    this.setState({ phase:'loading', err:'' });
+    const headers={};
+    if(this.state.apiKey) headers['x-api-key']=this.state.apiKey;
+    fetch(url, { headers })
+      .then(r=>r.json().catch(()=>({ error:'bad_json' })).then(j=>({ ok:r.ok, j })))
+      .then(({ok,j})=>{
+        if(j && j.error){ this.setState({ phase:'error', err:(j.message||j.error)+(j.status?(' ('+j.status+')'):'') }); return; }
+        const arr = Array.isArray(j) ? j : (j.pins || j.items || []);
+        const pins = arr.map(p=>({ image:p.image||p.url||'', link:p.link||'#', title:p.title||p.alt_text||'' })).filter(p=>p.image);
+        if(!pins.length){ this.setState({ phase:'empty', pins:[] }); return; }
+        this.setState({ phase:'ok', pins });
+      })
+      .catch(e=>this.setState({ phase:'error', err:String(e&&e.message||e) }));
+  }
+  renderVals(){
+    const ph=this.state.phase;
+    const ep=this.state.endpoint;
+    return {
+      pageOff:this.state.pageOff,
+      pageOn:!this.state.pageOff,
+      subtitle: ep ? 'live from your worker · '+(this.state.pins.length||0)+' pins' : 'no endpoint yet — set it in admin',
+      reload:()=>this.load(),
+      stateLoading: ph==='loading',
+      stateEmpty: ph==='empty',
+      stateError: ph==='error',
+      stateOk: ph==='ok',
+      errMsg:this.state.err,
+      endpointLabel: ep ? ep : '— none —',
+      pins:this.state.pins,
+    };
+  }
+}
+</script>
+</body>
+</html>

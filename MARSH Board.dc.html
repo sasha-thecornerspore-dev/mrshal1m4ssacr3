@@ -104,9 +104,18 @@
 
   <!-- COMPOSE (logged in) -->
   <sc-if value="{{ canCompose }}" hint-placeholder-val="{{ false }}">
-    <form onSubmit="{{ submitPost }}" style="padding:13px 15px; background:#dfd6c2; border-bottom:3px solid #100e0c; display:flex; gap:9px; align-items:flex-start;">
-      <input value="{{ draft }}" onInput="{{ setDraft }}" placeholder="leave a tag ★ (be nice ‼)" maxLength="280" class="mb-in" style="flex:1;">
-      <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:2px solid #100e0c; padding:8px 16px;">POST</button>
+    <form onSubmit="{{ submitPost }}" style="padding:13px 15px; background:#dfd6c2; border-bottom:3px solid #100e0c; display:flex; flex-direction:column; gap:9px;">
+      <div style="display:flex; gap:9px; align-items:flex-start;">
+        <input value="{{ draft }}" onInput="{{ setDraft }}" onPaste="{{ onPaste }}" placeholder="leave a tag ★ (paste or attach a pic ‼)" maxLength="280" class="mb-in" style="flex:1;">
+        <label style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; border:2px solid #100e0c; padding:8px 12px; white-space:nowrap;">★ PIC<input type="file" accept="image/*" onChange="{{ pickImg }}" style="display:none;"></label>
+        <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:2px solid #100e0c; padding:8px 16px;">POST</button>
+      </div>
+      <sc-if value="{{ hasDraftImg }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:flex-start; gap:9px;">
+          <img src="{{ draftImg }}" style="max-width:130px; max-height:130px; border:2px solid #100e0c; box-shadow:3px 3px 0 #100e0c;">
+          <button type="button" onClick="{{ clearImg }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:14px; color:#cc2326; background:none; border:1px solid #cc2326; padding:4px 9px;">remove ✕</button>
+        </div>
+      </sc-if>
     </form>
   </sc-if>
   <sc-if value="{{ blocked }}" hint-placeholder-val="{{ false }}">
@@ -123,7 +132,10 @@
         <div style="{{ p.cardStyle }}">
           <span style="position:absolute; top:-9px; left:12px; font-size:18px; color:#cc2326;">★</span>
           <sc-if value="{{ p.hidden }}" hint-placeholder-val="{{ false }}"><div style="font-family:'VT323',monospace; font-size:13px; color:#cc2326; margin-bottom:3px;">[hidden by mods]</div></sc-if>
-          <div style="font-family:'VT323',monospace; font-size:17px; line-height:1.25; color:#100e0c; word-break:break-word;">{{ p.body }}</div>
+          {{ p.imgEl }}
+          <sc-if value="{{ p.hasBody }}" hint-placeholder-val="{{ true }}">
+            <div style="font-family:'VT323',monospace; font-size:17px; line-height:1.25; color:#100e0c; word-break:break-word;">{{ p.body }}</div>
+          </sc-if>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; border-top:1.5px dashed #100e0c55; padding-top:5px; gap:6px;">
             <span style="display:flex; align-items:center; gap:5px;">
               <span style="font-family:'Permanent Marker',cursive; font-size:14px; color:#cc2326;">{{ p.display }}</span>
@@ -144,13 +156,17 @@
 class Component extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { ready:false, tab:'login', authU:'', authP:'', err:'', draft:'', postErr:'', panelOpen:false, banReason:'' };
+    this.state = { ready:false, tab:'login', authU:'', authP:'', err:'', draft:'', draftImg:'', postErr:'', panelOpen:false, banReason:'' };
   }
   componentDidMount(){ this.waitDB(0); }
   componentWillUnmount(){ if(this.unsub) this.unsub(); }
   waitDB(n){
     if(window.MarshDB){
-      this.unsub = window.MarshDB.subscribe(()=>this.forceUpdate());
+      this.unsub = window.MarshDB.subscribe(()=>{
+        // surface async errors bounced back from the server (wrong pw, rejected mutation)
+        const ne = window.MarshDB.netError ? window.MarshDB.netError() : '';
+        if(ne) this.setState({ err:ne }); else this.forceUpdate();
+      });
       this.setState({ ready:true });
     } else if(n<60){ setTimeout(()=>this.waitDB(n+1),60); }
   }
@@ -160,15 +176,48 @@ class Component extends DCLogic {
     e.preventDefault();
     const DB=this.DB(); if(!DB) return;
     const r = this.state.tab==='signup' ? DB.signup(this.state.authU,this.state.authP) : DB.login(this.state.authU,this.state.authP);
-    if(r.ok) this.setState({ authU:'', authP:'', err:'' });
+    // keep the username on optimistic submit so an async bounce lets them retry; clear the password only
+    if(r.ok) this.setState({ authP:'', err:'' });
     else this.setState({ err:r.error });
   }
   submitPost(e){
     e.preventDefault();
     const DB=this.DB(); if(!DB) return;
-    const r=DB.post(this.state.draft);
-    if(r.ok) this.setState({ draft:'', postErr:'' });
+    const r=DB.post(this.state.draft, this.state.draftImg);
+    if(r.ok) this.setState({ draft:'', draftImg:'', postErr:'' });
     else this.setState({ postErr:r.error });
+  }
+  loadImageFile(file, cb){
+    if(!file || !/^image\//.test(file.type||'')) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=720; let w=img.width, h=img.height;
+        if(w>max||h>max){ const s=Math.min(max/w,max/h); w=Math.round(w*s); h=Math.round(h*s); }
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        const ctx=c.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
+        let out; try{ out=c.toDataURL('image/jpeg',0.82); }catch(err){ out=reader.result; }
+        cb(out);
+      };
+      img.onerror=()=>cb(reader.result);
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  pickImg(e){
+    const f=e.target.files && e.target.files[0];
+    this.loadImageFile(f,(d)=>this.setState({ draftImg:d, postErr:'' }));
+    e.target.value='';
+  }
+  onPaste(e){
+    const items=(e.clipboardData && e.clipboardData.items) || [];
+    for(let i=0;i<items.length;i++){
+      if(items[i].type && items[i].type.indexOf('image')===0){
+        const f=items[i].getAsFile();
+        if(f){ this.loadImageFile(f,(d)=>this.setState({ draftImg:d, postErr:'' })); }
+      }
+    }
   }
   ago(ts){
     const s=Math.floor((Date.now()-ts)/1000);
@@ -200,7 +249,9 @@ class Component extends DCLogic {
       const canHide = isStaff && (DB.RANK[p.role]||1) < me.rank;
       const rot=(((p.id.charCodeAt(0)||3)%7)-3);
       return {
-        body:p.body, display:p.display, role:p.role, when:this.ago(p.ts), hidden:p.hidden,
+        body:p.body, hasBody:!!p.body,
+        imgEl: p.img ? React.createElement('img',{src:p.img, style:{display:'block', width:'100%', border:'1.5px solid #100e0c', marginBottom:'7px'}}) : null,
+        display:p.display, role:p.role, when:this.ago(p.ts), hidden:p.hidden,
         showRole:p.role!=='user', roleStyle:this.badge(p.role),
         wrapStyle:{ width:'216px', transform:'rotate('+rot+'deg)' },
         cardStyle:{ position:'relative', width:'100%', background: p.hidden?'#efe7d4':'#fffdf6', border:'2px solid #100e0c', boxShadow:'3px 3px 0 #100e0c', padding:'10px 11px 11px', opacity:p.hidden?0.7:1 },
@@ -257,6 +308,8 @@ class Component extends DCLogic {
       canCompose: loggedIn && !me.banned && !me.timedOut,
       blocked: loggedIn && (me.banned || me.timedOut), blockedMsg,
       draft:this.state.draft, setDraft:(e)=>this.setState({draft:e.target.value}),
+      draftImg:this.state.draftImg, hasDraftImg:!!this.state.draftImg,
+      pickImg:(e)=>this.pickImg(e), onPaste:(e)=>this.onPaste(e), clearImg:()=>this.setState({draftImg:''}),
       submitPost:(e)=>this.submitPost(e),
       hasPostErr:!!this.state.postErr, postErr:this.state.postErr,
 

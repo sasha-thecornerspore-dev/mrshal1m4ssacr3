@@ -18,6 +18,7 @@
   a.sl:hover{ background:#cc2326 !important; color:#ece6d8 !important; }
 </style>
 <script src="marsh-backend.js"></script>
+<script src="marsh-skins.js"></script>
 </helmet>
 <div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
   <div style="max-width:1160px; margin:0 auto;">
@@ -30,10 +31,9 @@
           <div style="font-family:'VT323',monospace; color:#9c948a; font-size:16px; line-height:1.05; align-self:center;">@mrshal1m4ssacr3<br>// artist + bassist • EST</div>
         </div>
         <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <span style="font-family:'Archivo Black',sans-serif; font-size:13px; background:#cc2326; color:#ece6d8; padding:9px 12px; border:2px solid #ece6d8;">★ HOME</span>
-          <a href="MARSH Demo Tape.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">DEMO TAPE</a>
-          <a href="MARSH Outlet.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">OUTLET</a>
-          <a href="MARSH Gallery.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">GALLERY</a>
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+            <a href="{{ n.href }}" style="{{ n.style }}">{{ n.label }}</a>
+          </sc-for>
         </nav>
       </div>
       <div style="overflow:hidden; background:#cc2326; border-top:3px solid #ece6d8; white-space:nowrap;">
@@ -79,25 +79,15 @@
     </section>
 
     <!-- NAV CARDS -->
-    <section data-screen-label="Sections" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px;">
-      <a class="navcard" href="MARSH Demo Tape.dc.html" style="text-decoration:none; border:3px solid #100e0c; background:#100e0c; box-shadow:6px 6px 0 #100e0c; padding:18px; display:flex; flex-direction:column; gap:8px; transition:transform .12s, box-shadow .12s;">
-        <span style="font-family:'VT323',monospace; font-size:30px; color:#cc2326;">▶ ❚❚</span>
-        <span style="font-family:'Archivo Black',sans-serif; font-size:22px; color:#ece6d8;">DEMO TAPE</span>
-        <span style="font-family:'VT323',monospace; font-size:16px; color:#9c948a;">5 bedroom bass demos in a real cassette/synth player. one bass, one mic.</span>
-        <span style="font-family:'Archivo Black',sans-serif; font-size:12px; color:#cc2326; margin-top:4px;">PLAY IT ▸</span>
-      </a>
-      <a class="navcard" href="MARSH Outlet.dc.html" style="text-decoration:none; border:3px solid #100e0c; background:#cc2326; box-shadow:6px 6px 0 #100e0c; padding:18px; display:flex; flex-direction:column; gap:8px; transition:transform .12s, box-shadow .12s;">
-        <span style="font-family:'VT323',monospace; font-size:30px; color:#100e0c;">★ $</span>
-        <span style="font-family:'Archivo Black',sans-serif; font-size:22px; color:#ece6d8;">THE OUTLET</span>
-        <span style="font-family:'VT323',monospace; font-size:16px; color:#ffe3e3;">prints, pins, patches, kandi + demo bundles. plus blinkie & flyer makers.</span>
-        <span style="font-family:'Archivo Black',sans-serif; font-size:12px; color:#100e0c; margin-top:4px;">SHOP + MAKE ▸</span>
-      </a>
-      <a class="navcard" href="MARSH Gallery.dc.html" style="text-decoration:none; border:3px solid #100e0c; background:#ece6d8; box-shadow:6px 6px 0 #100e0c; padding:18px; display:flex; flex-direction:column; gap:8px; transition:transform .12s, box-shadow .12s;">
-        <span style="font-family:'VT323',monospace; font-size:30px; color:#cc2326;">✶ ✦ ✶</span>
-        <span style="font-family:'Archivo Black',sans-serif; font-size:22px; color:#100e0c;">THE GALLERY</span>
-        <span style="font-family:'VT323',monospace; font-size:16px; color:#100e0c99;">the art. furry stuff, scene edits, sketches. look but do NOT trace or repost.</span>
-        <span style="font-family:'Archivo Black',sans-serif; font-size:12px; color:#cc2326; margin-top:4px;">LOOK ▸</span>
-      </a>
+    <section data-screen-label="Sections" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(244px,1fr)); gap:16px; margin-bottom:24px;">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+        <a class="navcard" href="{{ c.href }}" style="{{ c.style }}">
+          <span style="{{ c.iconStyle }}">{{ c.icon }}</span>
+          <span style="{{ c.titleStyle }}">{{ c.title }}</span>
+          <span style="{{ c.descStyle }}">{{ c.desc }}</span>
+          <span style="{{ c.ctaStyle }}">{{ c.cta }}</span>
+        </a>
+      </sc-for>
     </section>
 
     <!-- QUICK RULES -->
@@ -141,5 +131,82 @@
   </div>
 </div>
 </x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { ready:false };
+  }
+  componentDidMount(){ this.waitDB(0); }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
+  waitDB(n){
+    if(window.MarshDB){
+      this.unsub = window.MarshDB.subscribe(()=>this.forceUpdate());
+      this.setState({ ready:true });
+    } else if(n<80){ setTimeout(()=>this.waitDB(n+1),60); }
+  }
+  navStyle(active){
+    return active
+      ? { fontFamily:"'Archivo Black',sans-serif", fontSize:'13px', background:'#cc2326', color:'#ece6d8', padding:'9px 12px', border:'2px solid #ece6d8', textDecoration:'none' }
+      : { fontFamily:"'Archivo Black',sans-serif", fontSize:'13px', color:'#100e0c', background:'#ece6d8', padding:'9px 12px', border:'2px solid #ece6d8', textDecoration:'none' };
+  }
+  card(bg, icon, iconC, title, titleC, desc, descC, cta, ctaC, href){
+    return {
+      href, icon, title, desc, cta,
+      style:{ textDecoration:'none', border:'3px solid #100e0c', background:bg, boxShadow:'6px 6px 0 #100e0c', padding:'18px', display:'flex', flexDirection:'column', gap:'8px', transition:'transform .12s, box-shadow .12s' },
+      iconStyle:{ fontFamily:"'VT323',monospace", fontSize:'30px', color:iconC },
+      titleStyle:{ fontFamily:"'Archivo Black',sans-serif", fontSize:'22px', color:titleC },
+      descStyle:{ fontFamily:"'VT323',monospace", fontSize:'16px', color:descC },
+      ctaStyle:{ fontFamily:"'Archivo Black',sans-serif", fontSize:'12px', color:ctaC, marginTop:'4px' },
+    };
+  }
+  fallbackNav(){
+    return [
+      { href:'MARSH Home.dc.html', label:'★ HOME', style:this.navStyle(true) },
+      { href:'MARSH Demo Tape.dc.html', label:'DEMO TAPE', style:this.navStyle(false) },
+      { href:'MARSH Outlet.dc.html', label:'OUTLET', style:this.navStyle(false) },
+      { href:'MARSH Gallery.dc.html', label:'GALLERY', style:this.navStyle(false) },
+    ];
+  }
+  renderVals(){
+    const DB=window.MarshDB;
+    if(!this.state.ready || !DB){
+      return {
+        nav:this.fallbackNav(),
+        cards:[
+          this.card('#100e0c','▶ ❚❚','#cc2326','DEMO TAPE','#ece6d8','5 bedroom bass demos in a real cassette/synth player. one bass, one mic.','#9c948a','PLAY IT ▸','#cc2326','MARSH Demo Tape.dc.html'),
+          this.card('#cc2326','★ $','#100e0c','THE OUTLET','#ece6d8','prints, pins, patches, kandi + demo bundles. plus blinkie & flyer makers.','#ffe3e3','SHOP + MAKE ▸','#100e0c','MARSH Outlet.dc.html'),
+          this.card('#ece6d8','✶ ✦ ✶','#cc2326','THE GALLERY','#100e0c','the art. furry stuff, scene edits, sketches. look but do NOT trace.','#100e0c99','LOOK ▸','#cc2326','MARSH Gallery.dc.html'),
+        ],
+      };
+    }
+    const pages=DB.pages();
+    const me=DB.me();
+    const isStaff=me && me.rank>=2;
+    const pc=DB.pinsCfg();
+
+    // NAV
+    const nav=[ { href:'MARSH Home.dc.html', label:'★ HOME', style:this.navStyle(true) } ];
+    if(pages.demo!==false)    nav.push({ href:'MARSH Demo Tape.dc.html', label:'DEMO TAPE', style:this.navStyle(false) });
+    if(pages.outlet!==false)  nav.push({ href:'MARSH Outlet.dc.html', label:'OUTLET', style:this.navStyle(false) });
+    if(pages.gallery!==false) nav.push({ href:'MARSH Gallery.dc.html', label:'GALLERY', style:this.navStyle(false) });
+    if(pages.pins!==false)    nav.push({ href:'MARSH Pins.dc.html', label:'PINS', style:this.navStyle(false) });
+    if(pages.pinsapi!==false) nav.push({ href:'MARSH Pins API.dc.html', label:'PIN FEED', style:this.navStyle(false) });
+    if(isStaff) nav.push({ href:'MARSH Admin.dc.html', label:'⚙ ADMIN', style:{ fontFamily:"'Archivo Black',sans-serif", fontSize:'13px', color:'#ece6d8', background:'#100e0c', padding:'9px 12px', border:'2px solid #cc2326', textDecoration:'none' } });
+
+    // CARDS
+    const cards=[];
+    if(pages.demo!==false)    cards.push(this.card('#100e0c','▶ ❚❚','#cc2326','DEMO TAPE','#ece6d8','5 bedroom bass demos in a real cassette/synth player. one bass, one mic.','#9c948a','PLAY IT ▸','#cc2326','MARSH Demo Tape.dc.html'));
+    if(pages.outlet!==false)  cards.push(this.card('#cc2326','★ $','#100e0c','THE OUTLET','#ece6d8','prints, pins, patches, kandi + demo bundles. plus blinkie & flyer makers.','#ffe3e3','SHOP + MAKE ▸','#100e0c','MARSH Outlet.dc.html'));
+    if(pages.gallery!==false) cards.push(this.card('#ece6d8','✶ ✦ ✶','#cc2326','THE GALLERY','#100e0c','the art. furry stuff, scene edits, sketches. look but do NOT trace.','#100e0c99','LOOK ▸','#cc2326','MARSH Gallery.dc.html'));
+    const apiOn=pages.pinsapi!==false, widgetOn=pages.pins!==false;
+    if(pc.mode==='api' && apiOn)        cards.push(this.card('#171411','▦ ▦','#cc2326','MY PINS','#ece6d8','boards, refs + scene inspo — pulled live and laid out in my own look.','#9c948a','SEE PINS ▸','#cc2326','MARSH Pins API.dc.html'));
+    else if(widgetOn)                   cards.push(this.card('#171411','▦ ▦','#cc2326','MY PINS','#ece6d8','my pinterest boards — inspo, refs and scene stuff, straight from the source.','#9c948a','SEE PINS ▸','#cc2326','MARSH Pins.dc.html'));
+    else if(apiOn)                      cards.push(this.card('#171411','▦ ▦','#cc2326','MY PINS','#ece6d8','boards, refs + scene inspo — pulled live and laid out in my own look.','#9c948a','SEE PINS ▸','#cc2326','MARSH Pins API.dc.html'));
+
+    return { nav, cards };
+  }
+}
+</script>
 </body>
 </html>
