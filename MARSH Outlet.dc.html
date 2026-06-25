@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#100e0c; }
+  ::selection{ background:#cc2326; color:#ece6d8; }
+  @keyframes marq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @keyframes blink{ 50%{ opacity:0; } }
+  input,textarea{ font-family:'VT323',monospace; }
+  input[type=number]{ -moz-appearance:textfield; }
+</style>
+</helmet>
+<div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
+  <div style="max-width:1160px; margin:0 auto;">
+
+    <!-- HEADER -->
+    <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
+      <div style="display:flex; align-items:stretch; justify-content:space-between; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <a href="MARSH Home.dc.html" style="text-decoration:none; font-family:'Archivo Black',sans-serif; color:#ece6d8; font-size:34px; letter-spacing:-1px; transform:skewX(-6deg); line-height:1;">★MARSH<span style="color:#cc2326;">‼</span>★</a>
+          <div style="font-family:'VT323',monospace; color:#9c948a; font-size:16px; line-height:1.05; align-self:center;">outlet + workshop<br>// small batch • shipping EST</div>
+        </div>
+        <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <a href="MARSH Home.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">HOME</a>
+          <a href="MARSH Demo Tape.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">DEMO TAPE</a>
+          <a href="MARSH Gallery.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">GALLERY</a>
+          <span style="font-family:'Archivo Black',sans-serif; font-size:13px; background:#cc2326; color:#ece6d8; padding:9px 12px; border:2px solid #ece6d8;">★ OUTLET</span>
+        </nav>
+      </div>
+      <div style="overflow:hidden; background:#cc2326; border-top:3px solid #ece6d8; white-space:nowrap;">
+        <div style="display:inline-block; animation:marq 24s linear infinite; font-family:'VT323',monospace; font-size:17px; color:#ece6d8; padding:4px 0;">
+          <span style="padding:0 22px;">★ made by me ★ credit if you repost ★ no AI scraping ★ trade-friendly at shows ★ DM mutuals only ★ ships when im not busy lol ★&nbsp;</span><span style="padding:0 22px;">★ made by me ★ credit if you repost ★ no AI scraping ★ trade-friendly at shows ★ DM mutuals only ★ ships when im not busy lol ★&nbsp;</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- SHOP + CART -->
+    <section data-screen-label="Shop" style="display:grid; grid-template-columns:1fr 322px; gap:22px; align-items:start; margin-bottom:26px;">
+      <div>
+        <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+          <h2 style="font-family:'Archivo Black',sans-serif; font-size:24px; margin:0; transform:skewX(-6deg);">★ THE OUTLET</h2>
+          <span style="font-family:'VT323',monospace; font-size:16px; color:#cc2326;">small batch / made by me / no AI scraping</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+            <div style="border:3px solid #100e0c; background:#fffdf6; box-shadow:5px 5px 0 #100e0c; display:flex; flex-direction:column;">
+              <div style="{{ p.imgStyle }}">
+                <span style="position:absolute; top:8px; left:8px; font-family:'Archivo Black',sans-serif; font-size:10px; letter-spacing:0.5px; background:#100e0c; color:#ece6d8; padding:3px 8px; z-index:2;">{{ p.tag }}</span>
+                <sc-if value="{{ p.isKandi }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:repeating-linear-gradient(45deg,#cc2326 0 18px,#100e0c 18px 36px);">
+                    <div style="display:flex; gap:6px;">
+                      <div style="width:18px; height:18px; border-radius:50%; background:#cc2326; border:2px solid #100e0c;"></div>
+                      <div style="width:18px; height:18px; border-radius:50%; background:#ece6d8; border:2px solid #100e0c;"></div>
+                      <div style="width:18px; height:18px; border-radius:50%; background:#100e0c; border:2px solid #ece6d8;"></div>
+                      <div style="width:18px; height:18px; border-radius:50%; background:#cc2326; border:2px solid #100e0c;"></div>
+                      <div style="width:18px; height:18px; border-radius:50%; background:#ece6d8; border:2px solid #100e0c;"></div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="padding:12px 13px 13px; display:flex; flex-direction:column; flex:1;">
+                <div style="font-family:'Permanent Marker',cursive; font-size:18px; line-height:1.1; color:#100e0c;">{{ p.name }}</div>
+                <div style="font-family:'VT323',monospace; font-size:15px; color:#100e0c99; margin-top:5px; flex:1;">{{ p.desc }}</div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:11px;">
+                  <span style="font-family:'Archivo Black',sans-serif; font-size:18px; color:#cc2326;">{{ p.priceLabel }}</span>
+                  <button onClick="{{ p.add }}" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:12px; color:#ece6d8; background:#100e0c; border:2px solid #100e0c; padding:8px 12px;">★ ADD</button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- CART -->
+      <aside style="position:sticky; top:18px; border:3px solid #100e0c; background:#ece6d8; box-shadow:6px 6px 0 #cc2326;">
+        <div style="background:#100e0c; color:#ece6d8; padding:11px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'Archivo Black',sans-serif; font-size:16px;">★ ORDER ‼</span>
+          <span style="font-family:'VT323',monospace; font-size:15px; color:#9c948a;">{{ cartCount }} item(s)</span>
+        </div>
+        <sc-if value="{{ checkedOut }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px 16px; text-align:center;">
+            <div style="font-family:'Permanent Marker',cursive; font-size:26px; color:#cc2326; line-height:1.1;">request sent ♥</div>
+            <div style="font-family:'VT323',monospace; font-size:16px; color:#100e0c; margin-top:10px;">i'll get back to you if we're cool. ships from EST when im not busy lol.</div>
+            <button onClick="{{ reset }}" style="cursor:pointer; margin-top:16px; font-family:'Archivo Black',sans-serif; font-size:12px; color:#100e0c; background:#dfd6c2; border:2px solid #100e0c; padding:9px 14px;">◂ keep shopping</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ cartOpen }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:26px 16px; text-align:center; font-family:'VT323',monospace; font-size:17px; color:#100e0c99;">
+                <div style="font-size:34px;">☆</div>nothing here yet.<br>add some stuff ‼
+              </div>
+            </sc-if>
+            <sc-for list="{{ cartLines }}" as="c" hint-placeholder-count="0">
+              <div style="display:flex; gap:9px; padding:11px 12px; border-bottom:2px dashed #100e0c33; align-items:flex-start;">
+                <div style="flex:1; min-width:0;">
+                  <div style="font-family:'Special Elite',monospace; font-size:14px; line-height:1.15; color:#100e0c;">{{ c.name }}</div>
+                  <sc-if value="{{ c.isNyp }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; align-items:center; gap:4px; margin-top:5px;">
+                      <span style="font-family:'VT323',monospace; font-size:15px;">$</span>
+                      <input type="number" min="0" step="1" value="{{ c.price }}" onInput="{{ c.setPrice }}" style="width:54px; font-size:15px; padding:3px 5px; border:2px solid #100e0c; background:#fffdf6;">
+                      <span style="font-family:'VT323',monospace; font-size:13px; color:#100e0c99;">name yr price</span>
+                    </div>
+                  </sc-if>
+                  <div style="display:flex; align-items:center; gap:6px; margin-top:6px;">
+                    <button onClick="{{ c.dec }}" style="cursor:pointer; width:24px; height:24px; border:2px solid #100e0c; background:#dfd6c2; font-family:'Archivo Black',sans-serif; font-size:13px; line-height:1; padding:0;">−</button>
+                    <span style="font-family:'VT323',monospace; font-size:17px; min-width:18px; text-align:center;">{{ c.qty }}</span>
+                    <button onClick="{{ c.inc }}" style="cursor:pointer; width:24px; height:24px; border:2px solid #100e0c; background:#dfd6c2; font-family:'Archivo Black',sans-serif; font-size:13px; line-height:1; padding:0;">+</button>
+                  </div>
+                </div>
+                <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                  <span style="font-family:'Archivo Black',sans-serif; font-size:15px;">{{ c.lineTotal }}</span>
+                  <button onClick="{{ c.remove }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#cc2326; background:none; border:none; padding:0; text-decoration:underline;">remove</button>
+                </div>
+              </div>
+            </sc-for>
+            <div style="padding:13px 14px; background:#dfd6c2; border-top:3px solid #100e0c;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:11px;">
+                <span style="font-family:'Archivo Black',sans-serif; font-size:15px;">SUBTOTAL</span>
+                <span style="font-family:'Archivo Black',sans-serif; font-size:22px; color:#cc2326;">{{ subtotal }}</span>
+              </div>
+              <button onClick="{{ checkout }}" style="cursor:pointer; width:100%; padding:12px 0; font-family:'Archivo Black',sans-serif; font-size:14px; color:#ece6d8; background:#cc2326; border:3px solid #100e0c;">★ SEND REQUEST ‼</button>
+              <div style="font-family:'VT323',monospace; font-size:13px; color:#100e0c99; text-align:center; margin-top:7px;">i'll reply if we're cool ♥</div>
+            </div>
+          </div>
+        </sc-if>
+      </aside>
+    </section>
+
+    <!-- BLINKIE MAKER -->
+    <section data-screen-label="Blinkie maker" style="border:3px solid #100e0c; background:#171411; box-shadow:7px 7px 0 #cc2326; margin-bottom:26px; overflow:hidden;">
+      <div style="background:#cc2326; color:#ece6d8; padding:11px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+        <span style="font-family:'Archivo Black',sans-serif; font-size:18px;">★ BLINKIE MAKER</span>
+        <span style="font-family:'VT323',monospace; font-size:15px;">make a web-badge · pin it to your wall</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; padding:18px;">
+        <div>
+          <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a;">TEXT</div>
+          <input value="{{ blinkText }}" onInput="{{ setBlinkText }}" maxLength="34" style="width:100%; font-size:19px; padding:8px 10px; border:2px solid #cc2326; background:#0c0a08; color:#ece6d8; margin-top:5px;">
+          <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a; margin-top:16px;">COLORWAY</div>
+          <div style="display:flex; gap:8px; margin-top:6px; flex-wrap:wrap;">
+            <sc-for list="{{ palettes }}" as="pl" hint-placeholder-count="4">
+              <button onClick="{{ pl.pick }}" style="{{ pl.btnStyle }}"><div style="{{ pl.swStyle }}">ab</div></button>
+            </sc-for>
+          </div>
+          <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a; margin-top:16px;">MOTION</div>
+          <div style="display:flex; gap:8px; margin-top:6px;">
+            <sc-for list="{{ motions }}" as="m" hint-placeholder-count="3">
+              <button onClick="{{ m.pick }}" style="{{ m.style }}">{{ m.label }}</button>
+            </sc-for>
+          </div>
+          <button onClick="{{ pinBlinkie }}" style="cursor:pointer; margin-top:20px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#cc2326; border:3px solid #ece6d8; padding:11px 18px;">★ PIN IT TO MY WALL</button>
+        </div>
+        <div>
+          <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a; margin-bottom:8px;">LIVE PREVIEW</div>
+          <div style="display:flex; align-items:center; justify-content:center; padding:22px; background:repeating-linear-gradient(45deg,#0c0a08 0 14px,#141009 14px 28px); border:2px dashed #cc2326;">
+            <div style="{{ blinkBoxStyle }}">
+              <div style="{{ blinkRowStyle }}">
+                <span style="{{ blinkTextStyle }}">{{ blinkText }}</span>
+                <sc-if value="{{ blinkScroll }}" hint-placeholder-val="{{ false }}"><span style="{{ blinkTextStyle }}">{{ blinkText }}</span></sc-if>
+              </div>
+            </div>
+          </div>
+          <div style="font-family:'VT323',monospace; font-size:16px; color:#9c948a; margin-top:16px; margin-bottom:8px;">MY WALL ({{ wallCount }})</div>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; min-height:54px; align-content:flex-start;">
+            <sc-if value="{{ wallEmpty }}" hint-placeholder-val="{{ true }}">
+              <span style="font-family:'VT323',monospace; font-size:15px; color:#6f675c;">empty... pin some blinkies ‼</span>
+            </sc-if>
+            <sc-for list="{{ wall }}" as="w" hint-placeholder-count="0">
+              <div style="position:relative;">
+                <div style="{{ w.boxStyle }}"><div style="{{ w.rowStyle }}"><span style="{{ w.textStyle }}">{{ w.text }}</span><sc-if value="{{ w.scroll }}" hint-placeholder-val="{{ false }}"><span style="{{ w.textStyle }}">{{ w.text }}</span></sc-if></div></div>
+                <button onClick="{{ w.remove }}" style="cursor:pointer; position:absolute; top:-8px; right:-8px; width:20px; height:20px; border-radius:50%; border:2px solid #ece6d8; background:#cc2326; color:#ece6d8; font-family:'Archivo Black',sans-serif; font-size:11px; line-height:1; padding:0;">✕</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLYER BUILDER -->
+    <section data-screen-label="Flyer builder" style="border:3px solid #100e0c; background:#ece6d8; box-shadow:7px 7px 0 #100e0c; margin-bottom:26px; overflow:hidden;">
+      <div style="background:#100e0c; color:#ece6d8; padding:11px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+        <span style="font-family:'Archivo Black',sans-serif; font-size:18px;">★ FLYER BUILDER</span>
+        <span style="font-family:'VT323',monospace; font-size:15px; color:#9c948a;">make a show flyer · type to update</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 380px; gap:22px; padding:18px;">
+        <div style="display:flex; flex-direction:column; gap:13px;">
+          <div>
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">HEADLINER</div>
+            <input value="{{ fHeadline }}" onInput="{{ setFHeadline }}" maxLength="22" style="width:100%; font-size:19px; padding:8px 10px; border:2px solid #100e0c; background:#fffdf6; margin-top:4px;">
+          </div>
+          <div>
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">SUPPORT / W/</div>
+            <input value="{{ fSupport }}" onInput="{{ setFSupport }}" maxLength="44" style="width:100%; font-size:18px; padding:8px 10px; border:2px solid #100e0c; background:#fffdf6; margin-top:4px;">
+          </div>
+          <div>
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">DATE / TIME</div>
+            <input value="{{ fDate }}" onInput="{{ setFDate }}" maxLength="30" style="width:100%; font-size:18px; padding:8px 10px; border:2px solid #100e0c; background:#fffdf6; margin-top:4px;">
+          </div>
+          <div>
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">VENUE</div>
+            <input value="{{ fVenue }}" onInput="{{ setFVenue }}" maxLength="40" style="width:100%; font-size:18px; padding:8px 10px; border:2px solid #100e0c; background:#fffdf6; margin-top:4px;">
+          </div>
+          <div>
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">DOOR / NOTE</div>
+            <input value="{{ fPrice }}" onInput="{{ setFPrice }}" maxLength="34" style="width:100%; font-size:18px; padding:8px 10px; border:2px solid #100e0c; background:#fffdf6; margin-top:4px;">
+          </div>
+          <button onClick="{{ shuffle }}" style="cursor:pointer; margin-top:4px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#100e0c; border:3px solid #100e0c; padding:11px 18px;">⟳ SHUFFLE LAYOUT</button>
+        </div>
+        <div style="display:flex; justify-content:center;">
+          <div style="width:360px; background:#fffdf6; border:3px solid #100e0c; box-shadow:6px 6px 0 #cc2326; position:relative; overflow:hidden;">
+            <div style="height:22px; background:repeating-linear-gradient(90deg,#100e0c 0 16px,#cc2326 16px 32px);"></div>
+            <div style="text-align:center; padding:20px 18px 0;">
+              <div style="font-family:'VT323',monospace; font-size:16px; letter-spacing:3px; color:#cc2326;">★ ONE NIGHT ONLY ★</div>
+              <div style="{{ fHeadlineStyle }}">{{ fHeadline }}</div>
+              <div style="font-family:'Permanent Marker',cursive; font-size:18px; color:#100e0c; margin-top:8px;">{{ fSupport }}</div>
+              <div style="display:flex; align-items:center; gap:8px; justify-content:center; margin:14px 0;">
+                <div style="height:2px; flex:1; background:#100e0c;"></div><span style="color:#cc2326; font-size:16px;">★ ★ ★</span><div style="height:2px; flex:1; background:#100e0c;"></div>
+              </div>
+              <div style="font-family:'Archivo Black',sans-serif; font-size:26px; color:#100e0c; line-height:1;">{{ fDate }}</div>
+              <div style="font-family:'Special Elite',monospace; font-size:16px; color:#100e0c; margin-top:9px;">{{ fVenue }}</div>
+              <div style="display:inline-block; margin-top:13px; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; padding:6px 14px; transform:rotate(-2deg);">{{ fPrice }}</div>
+            </div>
+            <div style="{{ fStamp1Style }}">DIY ‼</div>
+            <div style="{{ fStamp2Style }}">BYO<br>EARPLUGS</div>
+            <div style="margin-top:16px; height:22px; background:repeating-linear-gradient(90deg,#cc2326 0 16px,#100e0c 16px 32px);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="border:3px solid #100e0c; background:#100e0c; overflow:hidden; white-space:nowrap;">
+      <div style="display:inline-block; animation:marq 26s linear infinite; font-family:'VT323',monospace; font-size:18px; color:#ece6d8; padding:7px 0;">
+        <span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ small batch ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span><span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ small batch ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.products = [
+      { id:'print', tag:'PRINT · A4', name:'marshall/marsh refsheet print', price:12, nyp:false, desc:'matte print, signed corner. limited run.', img:'https://i.pinimg.com/736x/82/ba/97/82ba97690dba9f3be8628d08eb05a6ac.jpg' },
+      { id:'bundle', tag:'DIGITAL', name:'bedroom demo bundle', price:0, nyp:true, desc:'three rough bass + vox demos. lossless + mp3.', img:'https://i.pinimg.com/736x/ae/a7/4d/aea74da93bb7756ddd3a3722cb0bc529.jpg' },
+      { id:'kandi', tag:'KANDI', name:'red/black checker kandi cuff', price:8, nyp:false, desc:'handmade beaded cuff. trade-friendly at shows.', img:null },
+      { id:'pin', tag:'PIN', name:'★MARSH‼★ enamel pin', price:10, nyp:false, desc:'1.25" hard enamel, rubber back. one per order.', img:'https://i.pinimg.com/280x280_RS/8d/90/14/8d90143dd0e0f205686e52e2a477907e.jpg' },
+      { id:'stickers', tag:'STICKER PACK', name:'fursona sticker pack', price:6, nyp:false, desc:'5 vinyl stickers. weatherproof. art by marsh.', img:'https://i.pinimg.com/736x/64/8d/6f/648d6feb7ddc8a949424be90f5727fb2.jpg' },
+      { id:'patch', tag:'PATCH', name:'detachable jacket patch', price:9, nyp:false, desc:'iron-on or sew-on. punk/grunge friendly.', img:'https://i.pinimg.com/736x/54/b2/55/54b2553c06745280181b1bec129c199c.jpg' },
+    ];
+    this.palettes = [
+      { id:'blood', bg:'#100e0c', fg:'#cc2326' },
+      { id:'bone',  bg:'#ece6d8', fg:'#100e0c' },
+      { id:'siren', bg:'#cc2326', fg:'#ece6d8' },
+      { id:'ghost', bg:'#100e0c', fg:'#ece6d8' },
+    ];
+    this.motionsList = [ {id:'scroll',label:'scroll'}, {id:'blink',label:'blink'}, {id:'static',label:'static'} ];
+    this.state = {
+      cart:{}, checkedOut:false,
+      blinkText:'★ MARSH ‼ ★', pal:0, motion:'scroll', wall:null,
+      fHeadline:'MARSH ‼', fSupport:'w/ basement flood + voidkitten', fDate:'FRI · APR 21 · 8PM', fVenue:'the corner spore — basement, EST', fPrice:'$5 door · all ages', seed:0,
+    };
+  }
+  componentDidMount(){
+    let cart={}, wall=[];
+    try{ cart=JSON.parse(localStorage.getItem('marsh_cart_v1')||'{}')||{}; }catch(e){}
+    try{ wall=JSON.parse(localStorage.getItem('marsh_wall_v1')||'[]')||[]; }catch(e){}
+    this.setState({ cart, wall });
+  }
+  saveCart(cart){ try{ localStorage.setItem('marsh_cart_v1',JSON.stringify(cart)); }catch(e){} }
+  saveWall(wall){ try{ localStorage.setItem('marsh_wall_v1',JSON.stringify(wall)); }catch(e){} }
+
+  add(id){
+    const p=this.products.find(x=>x.id===id);
+    const cart={...this.state.cart};
+    if(cart[id]) cart[id]={...cart[id], qty:cart[id].qty+1};
+    else cart[id]={ qty:1, price: p.nyp?5:p.price };
+    this.setState({ cart, checkedOut:false }); this.saveCart(cart);
+  }
+  changeQty(id,d){
+    const cart={...this.state.cart}; if(!cart[id]) return;
+    const q=cart[id].qty+d;
+    if(q<=0) delete cart[id]; else cart[id]={...cart[id], qty:q};
+    this.setState({ cart }); this.saveCart(cart);
+  }
+  removeItem(id){ const cart={...this.state.cart}; delete cart[id]; this.setState({cart}); this.saveCart(cart); }
+  setPrice(id,v){ const cart={...this.state.cart}; if(!cart[id])return; cart[id]={...cart[id], price:Math.max(0,Math.floor(+v||0))}; this.setState({cart}); this.saveCart(cart); }
+  checkout(){ if(this.cartCount()>0){ this.setState({ checkedOut:true, cart:{} }); this.saveCart({}); } }
+  cartCount(){ return Object.values(this.state.cart).reduce((a,c)=>a+c.qty,0); }
+
+  pinBlinkie(){
+    const p=this.palettes[this.state.pal];
+    const item={ text:this.state.blinkText||'★', bg:p.bg, fg:p.fg, motion:this.state.motion };
+    const wall=[item,...(this.state.wall||[])].slice(0,40);
+    this.setState({ wall }); this.saveWall(wall);
+  }
+  removeWall(i){ const wall=(this.state.wall||[]).filter((_,j)=>j!==i); this.setState({wall}); this.saveWall(wall); }
+
+  blinkBox(bg,fg,motion){
+    return { width:'176px', height:'44px', border:'3px solid '+fg, background:bg, overflow:'hidden', display:'flex', alignItems:'center', position:'relative', animation: motion==='blink'?'blink 0.85s steps(1) infinite':'none' };
+  }
+  blinkRow(motion){
+    if(motion==='scroll') return { display:'flex', gap:'30px', whiteSpace:'nowrap', width:'max-content', animation:'marq 6s linear infinite' };
+    return { display:'flex', width:'100%', justifyContent:'center', whiteSpace:'nowrap' };
+  }
+  blinkTxt(fg){ return { fontFamily:"'VT323',monospace", fontSize:'20px', lineHeight:'44px', color:fg, padding:'0 14px', textShadow:'1px 1px 0 #00000055' }; }
+
+  renderVals(){
+    const cart=this.state.cart;
+    const products=this.products.map(p=>({
+      name:p.name, desc:p.desc, tag:p.tag, isKandi:!p.img,
+      priceLabel: p.nyp? 'name your price' : '$'+p.price,
+      add:()=>this.add(p.id),
+      imgStyle:{ position:'relative', height:'150px', borderBottom:'3px solid #100e0c', overflow:'hidden', background: p.img? "#dfd6c2 url('"+p.img+"') center/cover" : '#dfd6c2' },
+    }));
+    const cartLines=Object.keys(cart).map(id=>{
+      const p=this.products.find(x=>x.id===id); const e=cart[id];
+      return { name:p.name, qty:e.qty, price:e.price, isNyp:p.nyp,
+        lineTotal:'$'+(e.qty*e.price),
+        inc:()=>this.changeQty(id,1), dec:()=>this.changeQty(id,-1),
+        remove:()=>this.removeItem(id), setPrice:(ev)=>this.setPrice(id,ev.target.value) };
+    });
+    const subNum=cartLines.reduce((a,c)=>a+c.qty*c.price,0);
+    const cur=this.palettes[this.state.pal];
+    const palettes=this.palettes.map((pl,i)=>({
+      pick:()=>this.setState({pal:i}),
+      btnStyle:{ cursor:'pointer', padding:'3px', background:'none', border: i===this.state.pal?'2px solid #cc2326':'2px solid transparent' },
+      swStyle:{ width:'58px', height:'30px', border:'2px solid #ece6d8', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'VT323',monospace", fontSize:'13px', background:pl.bg, color:pl.fg },
+    }));
+    const motions=this.motionsList.map(m=>({
+      label:m.label, pick:()=>this.setState({motion:m.id}),
+      style:{ cursor:'pointer', fontFamily:"'VT323',monospace", fontSize:'15px', padding:'6px 13px', border:'2px solid #ece6d8', background: this.state.motion===m.id?'#cc2326':'#0c0a08', color:'#ece6d8' },
+    }));
+    const wall=(this.state.wall||[]).map((w,i)=>({
+      text:w.text, scroll:w.motion==='scroll',
+      boxStyle:this.blinkBox(w.bg,w.fg,w.motion),
+      rowStyle:this.blinkRow(w.motion), textStyle:this.blinkTxt(w.fg),
+      remove:()=>this.removeWall(i),
+    }));
+    const seed=this.state.seed;
+    return {
+      products,
+      cartCount:this.cartCount(), cartLines, subtotal:'$'+subNum,
+      cartEmpty:cartLines.length===0, cartOpen:!this.state.checkedOut, checkedOut:this.state.checkedOut,
+      checkout:()=>this.checkout(), reset:()=>this.setState({checkedOut:false}),
+      blinkText:this.state.blinkText, setBlinkText:(e)=>this.setState({blinkText:e.target.value}),
+      palettes, motions,
+      blinkScroll:this.state.motion==='scroll',
+      blinkBoxStyle:this.blinkBox(cur.bg,cur.fg,this.state.motion),
+      blinkRowStyle:this.blinkRow(this.state.motion),
+      blinkTextStyle:this.blinkTxt(cur.fg),
+      pinBlinkie:()=>this.pinBlinkie(),
+      wall, wallCount:wall.length, wallEmpty:wall.length===0,
+      fHeadline:this.state.fHeadline, fSupport:this.state.fSupport, fDate:this.state.fDate, fVenue:this.state.fVenue, fPrice:this.state.fPrice,
+      setFHeadline:(e)=>this.setState({fHeadline:e.target.value}),
+      setFSupport:(e)=>this.setState({fSupport:e.target.value}),
+      setFDate:(e)=>this.setState({fDate:e.target.value}),
+      setFVenue:(e)=>this.setState({fVenue:e.target.value}),
+      setFPrice:(e)=>this.setState({fPrice:e.target.value}),
+      shuffle:()=>this.setState(s=>({seed:s.seed+1})),
+      fHeadlineStyle:{ fontFamily:"'Archivo Black',sans-serif", fontSize:'42px', lineHeight:0.95, color:'#cc2326', margin:'6px 0 0', transform:'skewX(-'+(4+(seed%3)*2)+'deg) rotate('+(((seed%3)-1)*1.5)+'deg)', textShadow:'3px 3px 0 #100e0c', wordBreak:'break-word' },
+      fStamp1Style:{ position:'absolute', top:'72px', right:'-4px', fontFamily:"'Archivo Black',sans-serif", fontSize:'15px', color:'#ece6d8', background:'#100e0c', padding:'5px 10px', transform:'rotate('+(8+(seed%3)*4)+'deg)' },
+      fStamp2Style:{ position:'absolute', bottom:'58px', left:'-4px', fontFamily:"'VT323',monospace", fontSize:'14px', lineHeight:1, color:'#100e0c', background:'#ece6d8', border:'2px solid #100e0c', padding:'5px 8px', transform:'rotate(-'+(6+(seed%2)*4)+'deg)', textAlign:'center' },
+    };
+  }
+}
+</script>
+</body>
+</html>

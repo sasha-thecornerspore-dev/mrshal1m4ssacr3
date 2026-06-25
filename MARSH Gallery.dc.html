@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#100e0c; }
+  ::selection{ background:#cc2326; color:#ece6d8; }
+  @keyframes marq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  .frame{ transition:transform .14s, box-shadow .14s; }
+  .frame:hover{ transform:rotate(0deg) translateY(-3px) !important; box-shadow:8px 8px 0 #cc2326 !important; z-index:3; }
+</style>
+<script src="image-slot.js"></script>
+</helmet>
+<div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
+  <div style="max-width:1160px; margin:0 auto;">
+
+    <!-- HEADER -->
+    <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
+      <div style="display:flex; align-items:stretch; justify-content:space-between; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <a href="MARSH Home.dc.html" style="text-decoration:none; font-family:'Archivo Black',sans-serif; color:#ece6d8; font-size:34px; letter-spacing:-1px; transform:skewX(-6deg); line-height:1;">★MARSH<span style="color:#cc2326;">‼</span>★</a>
+          <div style="font-family:'VT323',monospace; color:#9c948a; font-size:16px; line-height:1.05; align-self:center;">the gallery<br>// look but do NOT trace</div>
+        </div>
+        <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <a href="MARSH Home.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">HOME</a>
+          <a href="MARSH Demo Tape.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">DEMO TAPE</a>
+          <a href="MARSH Outlet.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">OUTLET</a>
+          <span style="font-family:'Archivo Black',sans-serif; font-size:13px; background:#cc2326; color:#ece6d8; padding:9px 12px; border:2px solid #ece6d8;">★ GALLERY</span>
+        </nav>
+      </div>
+      <div style="overflow:hidden; background:#cc2326; border-top:3px solid #ece6d8; white-space:nowrap;">
+        <div style="display:inline-block; animation:marq 24s linear infinite; font-family:'VT323',monospace; font-size:17px; color:#ece6d8; padding:4px 0;">
+          <span style="padding:0 22px;">★ my art is NOT public domain ★ do NOT trace ★ do NOT repost without credit ★ no AI scraping ★ edits ok WITH credit ★ ask before using ★&nbsp;</span><span style="padding:0 22px;">★ my art is NOT public domain ★ do NOT trace ★ do NOT repost without credit ★ no AI scraping ★ edits ok WITH credit ★ ask before using ★&nbsp;</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- TITLE + FILTER -->
+    <section style="display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:16px; flex-wrap:wrap;">
+      <div>
+        <h1 style="font-family:'Archivo Black',sans-serif; font-size:38px; margin:0; transform:skewX(-6deg); line-height:1;">★ THE GALLERY</h1>
+        <div style="font-family:'VT323',monospace; font-size:17px; color:#cc2326; margin-top:5px;">art of all kinds // furry · scene · sketches · merch designs</div>
+      </div>
+      <div style="display:flex; gap:7px; flex-wrap:wrap;">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+          <button onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- SCRAPBOOK WALL -->
+    <section data-screen-label="Gallery wall" style="display:flex; flex-wrap:wrap; gap:26px; align-items:flex-start; justify-content:center; padding:14px 6px 6px;">
+      <sc-for list="{{ pieces }}" as="p" hint-placeholder-count="5">
+        <div class="frame" style="{{ p.wrapStyle }}">
+          <div style="position:absolute; top:-13px; left:50%; transform:translateX(-50%) rotate(-3deg); width:78px; height:24px; background:#cc232688; border:1px dashed #ece6d8aa; z-index:2;"></div>
+          <div style="background:#fffdf6; border:3px solid #100e0c; box-shadow:6px 6px 0 #100e0c; padding:9px 9px 0;">
+            <img src="{{ p.src }}" referrerPolicy="no-referrer" alt="{{ p.caption }}" style="display:block; width:100%; height:{{ p.imgH }}; object-fit:cover; border:2px solid #100e0c; background:#dfd6c2;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 2px 11px; gap:8px;">
+              <span style="font-family:'Permanent Marker',cursive; font-size:16px; color:#100e0c; line-height:1;">{{ p.caption }}</span>
+              <span style="font-family:'VT323',monospace; font-size:12px; color:#ece6d8; background:#cc2326; padding:2px 7px;">{{ p.tag }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noneShown }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:'VT323',monospace; font-size:20px; color:#100e0c99; padding:40px;">nothing in this tag yet ☆</div>
+      </sc-if>
+    </section>
+
+    <!-- ADD YOUR OWN -->
+    <section data-screen-label="Drop slots" style="margin-top:34px; border:3px dashed #100e0c; background:#fffdf6aa; padding:18px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+        <h2 style="font-family:'Archivo Black',sans-serif; font-size:20px; margin:0;">★ LATEST DROPS</h2>
+        <span style="font-family:'VT323',monospace; font-size:16px; color:#cc2326;">drag your own art into a slot — it sticks ♥</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px;">
+        <div style="background:#fffdf6; border:3px solid #100e0c; box-shadow:5px 5px 0 #cc2326; padding:9px;">
+          <image-slot id="marsh-gal-1" shape="rect" placeholder="drop art ♥" style="display:block; width:100%; height:230px; border:2px solid #100e0c;"></image-slot>
+          <div style="font-family:'Permanent Marker',cursive; font-size:15px; margin-top:8px;">untitled — new</div>
+        </div>
+        <div style="background:#fffdf6; border:3px solid #100e0c; box-shadow:5px 5px 0 #cc2326; padding:9px;">
+          <image-slot id="marsh-gal-2" shape="rect" placeholder="drop art ♥" style="display:block; width:100%; height:230px; border:2px solid #100e0c;"></image-slot>
+          <div style="font-family:'Permanent Marker',cursive; font-size:15px; margin-top:8px;">untitled — new</div>
+        </div>
+        <div style="background:#fffdf6; border:3px solid #100e0c; box-shadow:5px 5px 0 #cc2326; padding:9px;">
+          <image-slot id="marsh-gal-3" shape="rect" placeholder="drop art ♥" style="display:block; width:100%; height:230px; border:2px solid #100e0c;"></image-slot>
+          <div style="font-family:'Permanent Marker',cursive; font-size:15px; margin-top:8px;">untitled — new</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="margin-top:26px; border:3px solid #100e0c; background:#100e0c; overflow:hidden; white-space:nowrap;">
+      <div style="display:inline-block; animation:marq 26s linear infinite; font-family:'VT323',monospace; font-size:18px; color:#ece6d8; padding:7px 0;">
+        <span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ do not trace ★ credit if you repost ★ ♥ ★&nbsp;</span><span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ do not trace ★ credit if you repost ★ ♥ ★&nbsp;</span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.all = [
+      { src:'https://i.pinimg.com/736x/82/ba/97/82ba97690dba9f3be8628d08eb05a6ac.jpg', caption:'MARSHALL — ref sheet', tag:'refs', w:330, h:'300px', rot:-2 },
+      { src:'https://i.pinimg.com/736x/64/8d/6f/648d6feb7ddc8a949424be90f5727fb2.jpg', caption:'fursona stickers', tag:'furry', w:250, h:'250px', rot:2.5 },
+      { src:'https://i.pinimg.com/736x/54/b2/55/54b2553c06745280181b1bec129c199c.jpg', caption:'jacket patch', tag:'scene', w:240, h:'230px', rot:-3 },
+      { src:'https://i.pinimg.com/280x280_RS/8d/90/14/8d90143dd0e0f205686e52e2a477907e.jpg', caption:'enamel pin design', tag:'merch', w:230, h:'230px', rot:2 },
+      { src:'https://i.pinimg.com/736x/ae/a7/4d/aea74da93bb7756ddd3a3722cb0bc529.jpg', caption:'demo bundle cover', tag:'music', w:250, h:'250px', rot:-1.5 },
+    ];
+    this.chipDefs = [
+      {id:'all',label:'ALL'},{id:'refs',label:'refs'},{id:'furry',label:'furry'},
+      {id:'scene',label:'scene'},{id:'merch',label:'merch'},{id:'music',label:'music'},
+    ];
+    this.state = { filter:'all' };
+  }
+  renderVals(){
+    const f=this.state.filter;
+    const pieces=this.all.filter(p=>f==='all'||p.tag===f).map(p=>({
+      src:p.src, caption:p.caption, tag:p.tag, imgH:p.h,
+      wrapStyle:{ position:'relative', width:p.w+'px', maxWidth:'100%', transform:'rotate('+p.rot+'deg)' },
+    }));
+    const chips=this.chipDefs.map(c=>{
+      const on=this.state.filter===c.id;
+      return { label:c.label, pick:()=>this.setState({filter:c.id}),
+        style:{ cursor:'pointer', fontFamily:"'Archivo Black',sans-serif", fontSize:'12px', letterSpacing:'0.5px', padding:'8px 12px', border:'2px solid #100e0c', background:on?'#cc2326':'#ece6d8', color:on?'#ece6d8':'#100e0c' } };
+    });
+    return { pieces, chips, noneShown:pieces.length===0 };
+  }
+}
+</script>
+</body>
+</html>

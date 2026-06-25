@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  .mb-in{ font-family:'VT323',monospace; font-size:17px; padding:8px 10px; border:2px solid #100e0c; background:#fffdf6; color:#100e0c; width:100%; }
+  .mb-in::placeholder{ color:#100e0c66; }
+</style>
+<script src="marsh-backend.js"></script>
+</helmet>
+<div style="border:3px solid #100e0c; background:#ece6d8; box-shadow:7px 7px 0 #100e0c; font-family:'Special Elite',monospace; color:#100e0c;">
+
+  <!-- bar -->
+  <div style="background:#100e0c; color:#ece6d8; padding:11px 15px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:17px;">★ COMMUNITY BOARD ‼</span>
+    <div style="display:flex; align-items:center; gap:9px;">
+      <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+        <span style="font-family:'VT323',monospace; font-size:15px; color:#9c948a;">@{{ myName }}</span>
+        <span style="{{ myBadgeStyle }}">{{ myRole }}</span>
+        <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ togglePanel }}" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:11px; color:#100e0c; background:#cc2326; border:2px solid #ece6d8; padding:5px 9px;">{{ panelLabel }}</button>
+        </sc-if>
+        <button onClick="{{ logout }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:14px; color:#ece6d8; background:none; border:1px solid #9c948a; padding:4px 9px;">log out</button>
+      </sc-if>
+      <sc-if value="{{ loggedOut }}" hint-placeholder-val="{{ true }}">
+        <span style="font-family:'VT323',monospace; font-size:15px; color:#9c948a;">guests can read · sign in to post</span>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- ADMIN / MOD PANEL -->
+  <sc-if value="{{ panelShown }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#171411; color:#ece6d8; padding:15px; border-bottom:3px solid #cc2326;">
+      <div style="font-family:'Archivo Black',sans-serif; font-size:15px; color:#cc2326; margin-bottom:4px;">⚙ MODERATION</div>
+      <div style="font-family:'VT323',monospace; font-size:14px; color:#9c948a; margin-bottom:10px;">ban reason (used when you ban):</div>
+      <input value="{{ banReason }}" onInput="{{ setBanReason }}" placeholder="reason…" class="mb-in" style="background:#0c0a08; color:#ece6d8; border-color:#cc2326; margin-bottom:12px;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:8px 10px; background:#0c0a08; border:2px solid #2a251f;">
+            <span style="font-family:'Special Elite',monospace; font-size:15px;">@{{ u.username }}</span>
+            <span style="{{ u.badgeStyle }}">{{ u.role }}</span>
+            <sc-if value="{{ u.statusShown }}" hint-placeholder-val="{{ false }}"><span style="font-family:'VT323',monospace; font-size:13px; color:#cc2326;">{{ u.status }}</span></sc-if>
+            <div style="margin-left:auto; display:flex; gap:6px; flex-wrap:wrap;">
+              <sc-if value="{{ u.canPromote }}" hint-placeholder-val="{{ false }}"><button onClick="{{ u.toggleMod }}" style="{{ u.modBtnStyle }}">{{ u.modBtnLabel }}</button></sc-if>
+              <sc-if value="{{ u.canAct }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ u.to10 }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#ece6d8; background:#3a342c; border:1px solid #5a5147; padding:3px 7px;">10m</button>
+                <button onClick="{{ u.to60 }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#ece6d8; background:#3a342c; border:1px solid #5a5147; padding:3px 7px;">1h</button>
+                <button onClick="{{ u.ban }}" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:11px; color:#ece6d8; background:#cc2326; border:1px solid #ece6d8; padding:3px 8px;">BAN</button>
+                <button onClick="{{ u.unban }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:13px; color:#100e0c; background:#dfd6c2; border:1px solid #ece6d8; padding:3px 7px;">clear</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- OWNER: track config -->
+      <sc-if value="{{ isOwner }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:18px; border-top:2px dashed #5a5147; padding-top:12px;">
+          <div style="font-family:'Archivo Black',sans-serif; font-size:15px; color:#cc2326; margin-bottom:4px;">⚙ DEMO-TAPE TRACK SLOTS</div>
+          <div style="font-family:'VT323',monospace; font-size:14px; color:#9c948a; margin-bottom:10px;">drop any preset into any slot — saves to the tape instantly.</div>
+          <div style="display:flex; flex-direction:column; gap:9px;">
+            <sc-for list="{{ trackRows }}" as="tr" hint-placeholder-count="5">
+              <div style="display:grid; grid-template-columns:24px 1fr 1fr 64px; gap:8px; align-items:center;">
+                <span style="font-family:'Archivo Black',sans-serif; font-size:14px; color:#cc2326;">{{ tr.num }}</span>
+                <input value="{{ tr.name }}" onInput="{{ tr.setName }}" class="mb-in" style="background:#0c0a08; color:#ece6d8; border-color:#5a5147; font-size:15px;">
+                <select value="{{ tr.preset }}" onChange="{{ tr.setPreset }}" style="font-family:'VT323',monospace; font-size:15px; padding:7px 8px; border:2px solid #5a5147; background:#0c0a08; color:#ece6d8;">
+                  <sc-for list="{{ tr.presetOpts }}" as="op" hint-placeholder-count="6">
+                    <option value="{{ op.id }}">{{ op.label }}</option>
+                  </sc-for>
+                </select>
+                <input type="number" min="50" max="180" value="{{ tr.bpm }}" onInput="{{ tr.setBpm }}" class="mb-in" style="background:#0c0a08; color:#ece6d8; border-color:#5a5147; font-size:15px;">
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- AUTH (logged out) -->
+  <sc-if value="{{ loggedOut }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:15px; background:#dfd6c2; border-bottom:3px solid #100e0c;">
+      <div style="display:flex; gap:6px; margin-bottom:11px;">
+        <button onClick="{{ tabLogin }}" style="{{ loginTabStyle }}">LOG IN</button>
+        <button onClick="{{ tabSignup }}" style="{{ signupTabStyle }}">SIGN UP</button>
+      </div>
+      <form onSubmit="{{ submitAuth }}" style="display:flex; flex-direction:column; gap:8px;">
+        <input value="{{ authU }}" onInput="{{ setAuthU }}" placeholder="username" class="mb-in" autoComplete="off">
+        <input value="{{ authP }}" onInput="{{ setAuthP }}" placeholder="password" type="password" class="mb-in">
+        <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">‼ {{ err }}</div></sc-if>
+        <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:3px solid #100e0c; padding:10px 0;">{{ authBtnLabel }}</button>
+      </form>
+      <div style="font-family:'VT323',monospace; font-size:13px; color:#100e0c99; margin-top:9px;">by posting you agree: be nice · no parasocial / flirting (marsh is a minor) · no vents · no stalking · credit reposts. mods can timeout or ban. ♥</div>
+    </div>
+  </sc-if>
+
+  <!-- COMPOSE (logged in) -->
+  <sc-if value="{{ canCompose }}" hint-placeholder-val="{{ false }}">
+    <form onSubmit="{{ submitPost }}" style="padding:13px 15px; background:#dfd6c2; border-bottom:3px solid #100e0c; display:flex; gap:9px; align-items:flex-start;">
+      <input value="{{ draft }}" onInput="{{ setDraft }}" placeholder="leave a tag ★ (be nice ‼)" maxLength="280" class="mb-in" style="flex:1;">
+      <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:2px solid #100e0c; padding:8px 16px;">POST</button>
+    </form>
+  </sc-if>
+  <sc-if value="{{ blocked }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:13px 15px; background:#100e0c; color:#cc2326; font-family:'VT323',monospace; font-size:16px; border-bottom:3px solid #cc2326;">✕ {{ blockedMsg }}</div>
+  </sc-if>
+  <sc-if value="{{ hasPostErr }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:8px 15px; background:#f4cfce; color:#8f1417; font-family:'VT323',monospace; font-size:15px;">‼ {{ postErr }}</div>
+  </sc-if>
+
+  <!-- POSTS -->
+  <div style="padding:13px; display:flex; flex-wrap:wrap; gap:13px; align-content:flex-start; min-height:140px; background-image:radial-gradient(#100e0c10 1px,transparent 1.4px); background-size:6px 6px;">
+    <sc-for list="{{ posts }}" as="p" hint-placeholder-count="3">
+      <div style="{{ p.wrapStyle }}">
+        <div style="{{ p.cardStyle }}">
+          <span style="position:absolute; top:-9px; left:12px; font-size:18px; color:#cc2326;">★</span>
+          <sc-if value="{{ p.hidden }}" hint-placeholder-val="{{ false }}"><div style="font-family:'VT323',monospace; font-size:13px; color:#cc2326; margin-bottom:3px;">[hidden by mods]</div></sc-if>
+          <div style="font-family:'VT323',monospace; font-size:17px; line-height:1.25; color:#100e0c; word-break:break-word;">{{ p.body }}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; border-top:1.5px dashed #100e0c55; padding-top:5px; gap:6px;">
+            <span style="display:flex; align-items:center; gap:5px;">
+              <span style="font-family:'Permanent Marker',cursive; font-size:14px; color:#cc2326;">{{ p.display }}</span>
+              <sc-if value="{{ p.showRole }}" hint-placeholder-val="{{ false }}"><span style="{{ p.roleStyle }}">{{ p.role }}</span></sc-if>
+            </span>
+            <span style="display:flex; align-items:center; gap:7px;">
+              <span style="font-family:'VT323',monospace; font-size:12px; color:#100e0c66;">{{ p.when }}</span>
+              <sc-if value="{{ p.canHide }}" hint-placeholder-val="{{ false }}"><button onClick="{{ p.hide }}" style="cursor:pointer; font-family:'VT323',monospace; font-size:12px; color:#cc2326; background:none; border:none; padding:0; text-decoration:underline;">{{ p.hideLabel }}</button></sc-if>
+            </span>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:620}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { ready:false, tab:'login', authU:'', authP:'', err:'', draft:'', postErr:'', panelOpen:false, banReason:'' };
+  }
+  componentDidMount(){ this.waitDB(0); }
+  componentWillUnmount(){ if(this.unsub) this.unsub(); }
+  waitDB(n){
+    if(window.MarshDB){
+      this.unsub = window.MarshDB.subscribe(()=>this.forceUpdate());
+      this.setState({ ready:true });
+    } else if(n<60){ setTimeout(()=>this.waitDB(n+1),60); }
+  }
+  DB(){ return window.MarshDB; }
+
+  submitAuth(e){
+    e.preventDefault();
+    const DB=this.DB(); if(!DB) return;
+    const r = this.state.tab==='signup' ? DB.signup(this.state.authU,this.state.authP) : DB.login(this.state.authU,this.state.authP);
+    if(r.ok) this.setState({ authU:'', authP:'', err:'' });
+    else this.setState({ err:r.error });
+  }
+  submitPost(e){
+    e.preventDefault();
+    const DB=this.DB(); if(!DB) return;
+    const r=DB.post(this.state.draft);
+    if(r.ok) this.setState({ draft:'', postErr:'' });
+    else this.setState({ postErr:r.error });
+  }
+  ago(ts){
+    const s=Math.floor((Date.now()-ts)/1000);
+    if(s<60) return 'just now';
+    if(s<3600) return Math.floor(s/60)+'m ago';
+    if(s<86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+  badge(role){
+    const base={ fontFamily:"'Archivo Black',sans-serif", fontSize:'9px', letterSpacing:'0.5px', padding:'2px 6px', textTransform:'uppercase' };
+    if(role==='owner') return {...base, background:'#cc2326', color:'#ece6d8'};
+    if(role==='mod') return {...base, background:'#100e0c', color:'#ece6d8'};
+    return {...base, background:'#cdc3ad', color:'#100e0c'};
+  }
+
+  renderVals(){
+    const DB=this.DB();
+    if(!this.state.ready || !DB){
+      return { loggedIn:false, loggedOut:false, canCompose:false, blocked:false, panelShown:false, hasErr:false, hasPostErr:false, posts:[], userRows:[], trackRows:[],
+        myBadgeStyle:{}, loginTabStyle:{}, signupTabStyle:{} };
+    }
+    const me=DB.me();
+    const loggedIn=!!me;
+    const isStaff=loggedIn && me.rank>=2;
+    const isOwner=loggedIn && me.rank>=3;
+    const panelShown=isStaff && this.state.panelOpen;
+
+    const posts=DB.posts().map(p=>{
+      const canHide = isStaff && (DB.RANK[p.role]||1) < me.rank;
+      const rot=(((p.id.charCodeAt(0)||3)%7)-3);
+      return {
+        body:p.body, display:p.display, role:p.role, when:this.ago(p.ts), hidden:p.hidden,
+        showRole:p.role!=='user', roleStyle:this.badge(p.role),
+        wrapStyle:{ width:'216px', transform:'rotate('+rot+'deg)' },
+        cardStyle:{ position:'relative', width:'100%', background: p.hidden?'#efe7d4':'#fffdf6', border:'2px solid #100e0c', boxShadow:'3px 3px 0 #100e0c', padding:'10px 11px 11px', opacity:p.hidden?0.7:1 },
+        canHide, hideLabel:p.hidden?'restore':'hide',
+        hide:()=> p.hidden ? DB.restorePost(p.id) : DB.deletePost(p.id),
+      };
+    });
+
+    const userRows = isStaff ? DB.users().map(u=>{
+      const canAct = me.rank>u.rank;
+      const canPromote = isOwner && u.role!=='owner' && u.username.toLowerCase()!==me.username.toLowerCase();
+      const status = u.banned ? (u.bannedUntil===-1?'BANNED ∞':'banned') : (u.timedOut?'timed out':'');
+      return {
+        username:u.username, role:u.role, badgeStyle:this.badge(u.role),
+        statusShown:!!status, status,
+        canAct, canPromote,
+        modBtnLabel: u.role==='mod'?'remove mod':'make mod',
+        modBtnStyle:{ cursor:'pointer', fontFamily:"'Archivo Black',sans-serif", fontSize:'11px', color:'#100e0c', background:'#ece6d8', border:'1px solid #ece6d8', padding:'3px 8px' },
+        toggleMod:()=> DB.setRole(u.username, u.role==='mod'?'user':'mod'),
+        to10:()=> DB.timeoutUser(u.username,10),
+        to60:()=> DB.timeoutUser(u.username,60),
+        ban:()=> DB.banUser(u.username, this.state.banReason, false),
+        unban:()=> DB.unban(u.username),
+      };
+    }) : [];
+
+    const presets=DB.presets();
+    const trackRows = isOwner ? DB.tracks().map(t=>({
+      num:String(t.slot+1).padStart(2,'0'),
+      name:t.name, preset:t.preset, bpm:t.bpm,
+      presetOpts:presets.map(p=>({id:p.id,label:p.label})),
+      setName:(e)=>DB.setTrack(t.slot,{name:e.target.value}),
+      setPreset:(e)=>DB.setTrack(t.slot,{preset:e.target.value}),
+      setBpm:(e)=>DB.setTrack(t.slot,{bpm:e.target.value}),
+    })) : [];
+
+    const blockedMsg = me && me.banned ? ('you are banned: '+(me.banReason||'no reason')) : (me && me.timedOut ? ('timed out — '+Math.ceil((me.timeoutUntil-Date.now())/60000)+'m left') : '');
+
+    return {
+      loggedIn, loggedOut:!loggedIn, isStaff, isOwner,
+      myName: me?me.username:'', myRole: me?me.role:'', myBadgeStyle: me?this.badge(me.role):{},
+      panelShown, panelLabel:this.state.panelOpen?'close panel':'mod panel',
+      togglePanel:()=>this.setState(s=>({panelOpen:!s.panelOpen})),
+      logout:()=>{ this.setState({panelOpen:false}); DB.logout(); },
+
+      tab:this.state.tab, tabLogin:()=>this.setState({tab:'login',err:''}), tabSignup:()=>this.setState({tab:'signup',err:''}),
+      loginTabStyle:this.tabStyle('login'), signupTabStyle:this.tabStyle('signup'),
+      authU:this.state.authU, authP:this.state.authP,
+      setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}),
+      submitAuth:(e)=>this.submitAuth(e),
+      authBtnLabel:this.state.tab==='signup'?'★ CREATE ACCOUNT':'★ LOG IN',
+      hasErr:!!this.state.err, err:this.state.err,
+
+      canCompose: loggedIn && !me.banned && !me.timedOut,
+      blocked: loggedIn && (me.banned || me.timedOut), blockedMsg,
+      draft:this.state.draft, setDraft:(e)=>this.setState({draft:e.target.value}),
+      submitPost:(e)=>this.submitPost(e),
+      hasPostErr:!!this.state.postErr, postErr:this.state.postErr,
+
+      banReason:this.state.banReason, setBanReason:(e)=>this.setState({banReason:e.target.value}),
+      userRows, trackRows,
+      posts,
+    };
+  }
+  tabStyle(which){
+    const on=this.state.tab===which;
+    return { cursor:'pointer', flex:1, fontFamily:"'Archivo Black',sans-serif", fontSize:'13px', padding:'9px 0', border:'2px solid #100e0c', background:on?'#100e0c':'#ece6d8', color:on?'#ece6d8':'#100e0c' };
+  }
+}
+</script>
+</body>
+</html>

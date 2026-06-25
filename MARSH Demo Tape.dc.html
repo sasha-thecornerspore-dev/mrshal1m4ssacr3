@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=VT323&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#100e0c; }
+  ::selection{ background:#cc2326; color:#ece6d8; }
+  @keyframes reel{ to{ transform:rotate(360deg); } }
+  @keyframes eqbar{ 0%,100%{ transform:scaleY(0.25); } 50%{ transform:scaleY(1); } }
+  @keyframes marq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @keyframes blink{ 50%{ opacity:0.2; } }
+  @keyframes wob{ 0%,100%{ transform:rotate(-1.5deg); } 50%{ transform:rotate(1.5deg); } }
+  input[type=range]{ -webkit-appearance:none; appearance:none; background:transparent; }
+  input[type=range]::-webkit-slider-runnable-track{ height:6px; background:#100e0c; border:2px solid #100e0c; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:14px; height:20px; background:#cc2326; border:2px solid #100e0c; margin-top:-9px; cursor:pointer; }
+  input[type=range]::-moz-range-thumb{ width:14px; height:20px; background:#cc2326; border:2px solid #100e0c; cursor:pointer; border-radius:0; }
+</style>
+<script src="marsh-backend.js"></script>
+</helmet>
+<div style="min-height:100vh; background:#ece6d8; background-image:radial-gradient(#100e0c12 1px,transparent 1.4px); background-size:5px 5px; padding:26px 18px 60px; font-family:'Special Elite',monospace; color:#100e0c;">
+  <div style="max-width:1160px; margin:0 auto;">
+
+    <!-- ===== HEADER ===== -->
+    <header data-screen-label="Header" style="border:3px solid #100e0c; background:#100e0c; box-shadow:9px 9px 0 #cc2326; margin-bottom:22px;">
+      <div style="display:flex; align-items:stretch; justify-content:space-between; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <a href="MARSH Home.dc.html" style="text-decoration:none; font-family:'Archivo Black',sans-serif; color:#ece6d8; font-size:34px; letter-spacing:-1px; transform:skewX(-6deg); line-height:1;">★MARSH<span style="color:#cc2326;">‼</span>★</a>
+          <div style="font-family:'VT323',monospace; color:#9c948a; font-size:16px; line-height:1.05; align-self:center;">bedroom demos<br>// est • do not feed to AI</div>
+        </div>
+        <nav style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <a href="MARSH Home.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">HOME</a>
+          <span style="font-family:'Archivo Black',sans-serif; font-size:13px; background:#cc2326; color:#ece6d8; padding:9px 12px; border:2px solid #ece6d8;">▶ DEMO TAPE</span>
+          <a href="MARSH Outlet.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">OUTLET</a>
+          <a href="MARSH Gallery.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; padding:9px 12px; border:2px solid #ece6d8; text-decoration:none;">GALLERY</a>
+        </nav>
+      </div>
+      <div style="overflow:hidden; background:#cc2326; border-top:3px solid #ece6d8; white-space:nowrap;">
+        <div style="display:inline-block; animation:marq 22s linear infinite; font-family:'VT323',monospace; font-size:17px; color:#ece6d8; padding:4px 0;">
+          <span style="padding:0 22px;">★ recorded in my room ★ one bass + one mic ★ rough mixes ★ name your price ★ no kpop ★ monster energy fueled ★ socially awkward but the bass talks ★&nbsp;</span><span style="padding:0 22px;">★ recorded in my room ★ one bass + one mic ★ rough mixes ★ name your price ★ no kpop ★ monster energy fueled ★ socially awkward but the bass talks ★&nbsp;</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== PLAYER ===== -->
+    <section data-screen-label="Player" style="display:grid; grid-template-columns:380px 1fr; gap:22px; margin-bottom:26px;">
+
+      <!-- DECK -->
+      <div style="border:3px solid #100e0c; background:#dfd6c2; box-shadow:7px 7px 0 #100e0c; padding:16px;">
+        <!-- cassette -->
+        <div style="background:#171411; border:3px solid #100e0c; padding:14px 14px 12px; position:relative;">
+          <div style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-family:'VT323',monospace; color:#cc2326; font-size:14px; letter-spacing:2px;">★ MARSH ‼ — TYPE I</div>
+          <!-- label -->
+          <div style="margin-top:20px; background:#ece6d8; border:2px solid #100e0c; padding:9px 10px 8px; transform:rotate(-0.6deg);">
+            <div style="font-family:'Permanent Marker',cursive; font-size:21px; line-height:1; color:#100e0c;">{{ currentName }}</div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:5px;">
+              <span style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">{{ currentMeta }}</span>
+              <span style="font-family:'VT323',monospace; font-size:13px; color:#100e0c99;">side a · marsh</span>
+            </div>
+          </div>
+          <!-- reels -->
+          <div style="display:flex; justify-content:space-around; align-items:center; margin-top:16px; padding:0 6px;">
+            <div style="width:74px; height:74px; border-radius:50%; background:#0c0a08; border:3px solid #2a251f; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 16px #171411;">
+              <div style="width:30px; height:30px; position:relative; color:#c9c0ad;"><div style="{{ spinStyle }}">✶</div></div>
+            </div>
+            <div style="flex:1; height:8px; margin:0 8px; background:repeating-linear-gradient(90deg,#cc2326 0 9px,#171411 9px 18px); border:2px solid #2a251f;"></div>
+            <div style="width:74px; height:74px; border-radius:50%; background:#0c0a08; border:3px solid #2a251f; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 16px #171411;">
+              <div style="width:30px; height:30px; position:relative; color:#c9c0ad;"><div style="{{ spinStyle }}">✶</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- counter / progress -->
+        <div style="display:flex; align-items:center; gap:10px; margin-top:14px; font-family:'VT323',monospace; font-size:18px;">
+          <span ref="{{ timeRef }}" style="color:#100e0c; min-width:42px;">0:00</span>
+          <div style="flex:1; height:14px; border:2px solid #100e0c; background:#ece6d8; padding:1px;">
+            <div ref="{{ progressRef }}" style="height:100%; width:0%; background:#cc2326;"></div>
+          </div>
+          <span ref="{{ totalRef }}" style="color:#100e0c99; min-width:42px; text-align:right;">1:42</span>
+        </div>
+
+        <!-- transport -->
+        <div style="display:flex; align-items:center; gap:8px; margin-top:14px;">
+          <button onClick="{{ prev }}" style="cursor:pointer; flex:1; padding:11px 0; background:#ece6d8; border:3px solid #100e0c; font-family:'Archivo Black',sans-serif; font-size:15px; color:#100e0c;">◀◀</button>
+          <button onClick="{{ togglePlay }}" style="cursor:pointer; flex:1.6; padding:11px 0; background:#cc2326; border:3px solid #100e0c; font-family:'Archivo Black',sans-serif; font-size:16px; color:#ece6d8;">{{ playLabel }}</button>
+          <button onClick="{{ next }}" style="cursor:pointer; flex:1; padding:11px 0; background:#ece6d8; border:3px solid #100e0c; font-family:'Archivo Black',sans-serif; font-size:15px; color:#100e0c;">▶▶</button>
+        </div>
+
+        <!-- sound toggle -->
+        <button onClick="{{ toggleMute }}" style="{{ muteBtnStyle }}">{{ muteLabel }}</button>
+
+        <!-- vu + volume -->
+        <div style="display:flex; align-items:flex-end; gap:3px; height:42px; margin-top:14px; padding:6px 8px; background:#171411; border:3px solid #100e0c;" ref="{{ vuRef }}">
+          <sc-for list="{{ vuBars }}" as="b" hint-placeholder-count="16">
+            <div style="flex:1; height:8%; background:#cc2326; min-height:2px; align-self:flex-end;"></div>
+          </sc-for>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:12px; font-family:'VT323',monospace; font-size:16px;">
+          <span>VOL</span>
+          <input type="range" min="0" max="100" value="{{ volumePct }}" onChange="{{ setVolume }}" style="flex:1;">
+          <span style="min-width:34px; text-align:right;">{{ volumePct }}</span>
+        </div>
+      </div>
+
+      <!-- TRACKLIST -->
+      <div style="border:3px solid #100e0c; background:#ece6d8; box-shadow:7px 7px 0 #100e0c; display:flex; flex-direction:column;">
+        <div style="background:#100e0c; color:#ece6d8; padding:11px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'Archivo Black',sans-serif; font-size:17px; letter-spacing:0.5px;">★ TRACKLIST</span>
+          <span style="font-family:'VT323',monospace; font-size:15px; color:#9c948a;">5 slots · marsh can swap them</span>
+        </div>
+        <div style="padding:6px;">
+          <sc-for list="{{ tracks }}" as="t" hint-placeholder-count="5">
+            <div onClick="{{ t.select }}" style="{{ t.rowStyle }}">
+              <div style="width:26px; font-family:'Archivo Black',sans-serif; font-size:16px; text-align:center; color:#100e0c;">{{ t.num }}</div>
+              <div style="width:42px; display:flex; align-items:flex-end; gap:2px; height:22px; justify-content:center;">
+                <sc-if value="{{ t.showEq }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:4px; height:100%; background:#cc2326; transform-origin:bottom; animation:eqbar 0.5s ease-in-out infinite;"></div>
+                  <div style="width:4px; height:100%; background:#cc2326; transform-origin:bottom; animation:eqbar 0.5s ease-in-out infinite 0.15s;"></div>
+                  <div style="width:4px; height:100%; background:#cc2326; transform-origin:bottom; animation:eqbar 0.5s ease-in-out infinite 0.3s;"></div>
+                  <div style="width:4px; height:100%; background:#cc2326; transform-origin:bottom; animation:eqbar 0.5s ease-in-out infinite 0.45s;"></div>
+                </sc-if>
+                <sc-if value="{{ t.notEq }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-family:'VT323',monospace; font-size:20px; color:#100e0c66;">▶</span>
+                </sc-if>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-family:'Permanent Marker',cursive; font-size:19px; line-height:1.05; color:#100e0c;">{{ t.name }}</div>
+                <div style="font-family:'VT323',monospace; font-size:14px; color:#100e0c99; margin-top:2px;">{{ t.sub }}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
+                <span style="font-family:'VT323',monospace; font-size:16px;">{{ t.dur }}</span>
+                <span style="font-family:'VT323',monospace; font-size:11px; padding:1px 6px; border:1.5px solid #100e0c; background:#dfd6c2;">{{ t.bpm }} BPM</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:auto; padding:12px 16px; background:#dfd6c2; border-top:3px solid #100e0c; font-family:'VT323',monospace; font-size:16px; color:#100e0c; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span>↳ tip: it's a real synth — each demo is a live bassline.</span>
+          <a href="MARSH Outlet.dc.html" style="font-family:'Archivo Black',sans-serif; font-size:12px; color:#ece6d8; background:#cc2326; padding:6px 11px; border:2px solid #100e0c; text-decoration:none;">GET THE BUNDLE ▸</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REFSHEET + TAGBOARD ===== -->
+    <section data-screen-label="Refsheet and tagboard" style="display:grid; grid-template-columns:360px 1fr; gap:22px;">
+
+      <!-- REFSHEET FLIP CARD -->
+      <div>
+        <div style="font-family:'Archivo Black',sans-serif; font-size:14px; margin-bottom:9px; transform:skewX(-6deg);">★ REFSHEET <span style="color:#cc2326;">// tap to flip</span></div>
+        <div onClick="{{ flip }}" style="cursor:pointer; perspective:1200px; height:430px;">
+          <div style="{{ flipStyle }}">
+            <!-- FRONT -->
+            <div style="position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border:3px solid #100e0c; background:#171411; box-shadow:7px 7px 0 #cc2326; overflow:hidden; display:flex; flex-direction:column;">
+              <div style="flex:1; background-image:repeating-linear-gradient(45deg,#cc2326 0 26px,#100e0c 26px 52px); display:flex; align-items:center; justify-content:center; position:relative;">
+                <div style="width:150px; height:150px; border-radius:50%; border:4px solid #ece6d8; background:#dfd6c2 url('https://i.pinimg.com/280x280_RS/8d/90/14/8d90143dd0e0f205686e52e2a477907e.jpg') center/cover; box-shadow:0 6px 18px #00000066;"></div>
+                <div style="position:absolute; top:10px; left:12px; font-family:'Permanent Marker',cursive; color:#ece6d8; font-size:18px; transform:rotate(-8deg);">★ marsh</div>
+              </div>
+              <div style="background:#ece6d8; padding:12px 14px; border-top:3px solid #100e0c;">
+                <div style="font-family:'Archivo Black',sans-serif; font-size:22px; line-height:1;">MARSHALL</div>
+                <div style="font-family:'VT323',monospace; font-size:16px; color:#cc2326; margin-top:3px;">@mrshal1m4ssacr3 · he/him · INFP</div>
+                <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:9px;">
+                  <span style="font-family:'VT323',monospace; font-size:13px; background:#100e0c; color:#ece6d8; padding:2px 8px;">furry</span>
+                  <span style="font-family:'VT323',monospace; font-size:13px; background:#cc2326; color:#ece6d8; padding:2px 8px;">bassist+singer</span>
+                  <span style="font-family:'VT323',monospace; font-size:13px; background:#100e0c; color:#ece6d8; padding:2px 8px;">artist</span>
+                  <span style="font-family:'VT323',monospace; font-size:13px; border:1.5px solid #100e0c; padding:2px 8px;">scene/grunge</span>
+                </div>
+              </div>
+            </div>
+            <!-- BACK -->
+            <div style="position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; transform:rotateY(180deg); border:3px solid #100e0c; background:#ece6d8; box-shadow:7px 7px 0 #100e0c; padding:14px 16px; overflow:auto;">
+              <div style="font-family:'Archivo Black',sans-serif; font-size:16px; border-bottom:3px solid #100e0c; padding-bottom:6px;">STATS ‼</div>
+              <div style="font-family:'VT323',monospace; font-size:16px; line-height:1.5; margin-top:8px; color:#100e0c;">
+                5'0 :c · Filipino · born apr 21 · EST<br>ADHD / ASD / OCD / BPD<br>trans male · bi · homoromantic · arospec
+              </div>
+              <div style="font-family:'Archivo Black',sans-serif; font-size:13px; margin-top:12px; color:#cc2326;">LIKES</div>
+              <div style="font-family:'VT323',monospace; font-size:15px; line-height:1.4; color:#100e0c;">sleeping · Monster Energy · cats · comics · concerts · philosophy · pins · history · expensive pants · saying "&lt;3"</div>
+              <div style="font-family:'Archivo Black',sans-serif; font-size:13px; margin-top:10px; color:#cc2326;">DISLIKES</div>
+              <div style="font-family:'VT323',monospace; font-size:15px; line-height:1.4; color:#100e0c;">school · winter · bugs · authority · kpop · being lied to · having people over</div>
+              <div style="margin-top:12px; font-family:'Permanent Marker',cursive; font-size:14px; transform:rotate(-1deg);">art is NOT public domain ♥</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMUNITY BOARD (shared, with accounts + moderation) -->
+      <dc-import name="MARSH Board" hint-size="100%,560px"></dc-import>
+    </section>
+
+    <!-- ===== FOOTER MARQUEE ===== -->
+    <footer style="margin-top:26px; border:3px solid #100e0c; background:#100e0c; overflow:hidden; white-space:nowrap;">
+      <div style="display:inline-block; animation:marq 26s linear infinite; font-family:'VT323',monospace; font-size:18px; color:#ece6d8; padding:7px 0;">
+        <span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ small batch ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span><span style="padding:0 24px;">★ ★MARSH‼★ — @mrshal1m4ssacr3 ★ art is NOT public domain ★ do not feed to AI ★ small batch ★ credit if you repost ★ EST ★ ♥ ★&nbsp;</span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.progressRef = React.createRef();
+    this.timeRef = React.createRef();
+    this.totalRef = React.createRef();
+    this.vuRef = React.createRef();
+    this.bank = {
+      flood:    { bass:["E2",0,"E2",0,"E2","G2",0,"E2",0,"B1",0,"B1",0,"C2",0,"D2"], kick:"1000100010001000", hat:"0010001000100010" },
+      monster:  { bass:["A1",0,"A1","A1",0,"A1",0,"A1","C2",0,"C2",0,"E2",0,"D2",0], kick:"1010101010101010", hat:"0101010101010101" },
+      awkward:  { bass:["D2",0,0,0,"D2",0,"F2",0,"A2",0,0,0,"E2",0,"F2",0], kick:"1000000010000000", hat:"0000100000001000" },
+      checker:  { bass:["E2","E2","E2","E2","G2","G2","E2","E2","A2","A2","E2","E2","B2","B2","E2","E2"], kick:"1010101010101010", hat:"1111111111111111" },
+      insomnia: { bass:["C2",0,"C2",0,"Eb2",0,"C2",0,"G2",0,"G2",0,"Ab2",0,"G2",0], kick:"1001001000100100", hat:"0100100101001001" },
+      silence:  { bass:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], kick:"0000000000000000", hat:"0000000000000000" },
+    };
+    this.defaultCfg = [
+      { slot:0, preset:'flood',    name:'basement flood',       bpm:82,  sub:'slow, drowning bass · 2024' },
+      { slot:1, preset:'monster',  name:'monster energy (3am)', bpm:100, sub:"jittery · can't sleep mix" },
+      { slot:2, preset:'awkward',  name:'socially awkward',     bpm:70,  sub:'the long quiet one' },
+      { slot:3, preset:'checker',  name:'red / black checker',  bpm:116, sub:'fast, punk, 90 seconds' },
+      { slot:4, preset:'insomnia', name:'EST insomnia',         bpm:88,  sub:'4am demo · rough vox cut' },
+    ];
+    this.tracks = this.buildTracks();
+    this.state = { playing:false, current:0, flipped:false, muted:false, volume:0.82 };
+  }
+
+  buildTracks(){
+    const cfg = (window.MarshDB ? window.MarshDB.tracks() : this.defaultCfg);
+    return cfg.map(t=>{
+      const pat = this.bank[t.preset] || this.bank.silence;
+      const len = Math.max(40, Math.round((60/(t.bpm||90))*4*22));
+      return { name:t.name||'untitled', sub:t.sub||'', bpm:t.bpm||90, preset:t.preset, len, bass:pat.bass, kick:pat.kick, hat:pat.hat };
+    });
+  }
+  refreshTracks(){
+    this.tracks = this.buildTracks();
+    if(this.curr==null) this.curr=0;
+    if(this.curr>=this.tracks.length) this.curr=0;
+    this.forceUpdate();
+  }
+  componentDidMount(){ this.waitDB(0); }
+  waitDB(n){
+    if(window.MarshDB){
+      this.refreshTracks();
+      this.unsub = window.MarshDB.subscribe(()=>this.refreshTracks());
+    } else if(n<60){ setTimeout(()=>this.waitDB(n+1),60); }
+  }
+  componentWillUnmount(){ this.hardStop(); if(this.unsub) this.unsub(); }
+
+  parseNote(n){
+    const m=/^([A-G])(b|#)?(\d)$/.exec(n); if(!m) return 110;
+    const base={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]];
+    const semi=base+(m[2]==='#'?1:m[2]==='b'?-1:0);
+    const midi=semi+(parseInt(m[3])+1)*12;
+    return 440*Math.pow(2,(midi-69)/12);
+  }
+  fmt(s){ s=Math.max(0,Math.floor(s)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+
+  ensureAudio(){
+    if(this.ctx) return;
+    const AC=window.AudioContext||window.webkitAudioContext;
+    this.ctx=new AC();
+    this.master=this.ctx.createGain();
+    this.master.gain.value=this.state.volume;
+    this.analyser=this.ctx.createAnalyser();
+    this.analyser.fftSize=64;
+    this.master.connect(this.analyser);
+    this.analyser.connect(this.ctx.destination);
+    this.freqData=new Uint8Array(this.analyser.frequencyBinCount);
+  }
+
+  playBass(freq,time,dur){
+    const c=this.ctx;
+    const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=freq;
+    const sub=c.createOscillator(); sub.type='sine'; sub.frequency.value=freq/2;
+    const f=c.createBiquadFilter(); f.type='lowpass'; f.Q.value=7;
+    f.frequency.setValueAtTime(900,time); f.frequency.exponentialRampToValueAtTime(190,time+dur*0.85);
+    const g=c.createGain();
+    g.gain.setValueAtTime(0.0001,time);
+    g.gain.linearRampToValueAtTime(0.5,time+0.012);
+    g.gain.exponentialRampToValueAtTime(0.2,time+dur*0.5);
+    g.gain.exponentialRampToValueAtTime(0.0008,time+dur);
+    o.connect(f); sub.connect(f); f.connect(g); g.connect(this.master);
+    o.start(time); sub.start(time); o.stop(time+dur+0.03); sub.stop(time+dur+0.03);
+  }
+  playKick(time){
+    const c=this.ctx;
+    const o=c.createOscillator(); o.type='sine';
+    o.frequency.setValueAtTime(145,time); o.frequency.exponentialRampToValueAtTime(46,time+0.12);
+    const g=c.createGain(); g.gain.setValueAtTime(0.7,time); g.gain.exponentialRampToValueAtTime(0.001,time+0.17);
+    o.connect(g); g.connect(this.master); o.start(time); o.stop(time+0.2);
+  }
+  playHat(time){
+    const c=this.ctx;
+    const b=c.createBuffer(1,Math.floor(c.sampleRate*0.05),c.sampleRate);
+    const d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    const s=c.createBufferSource(); s.buffer=b;
+    const hp=c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=7200;
+    const g=c.createGain(); g.gain.setValueAtTime(0.16,time); g.gain.exponentialRampToValueAtTime(0.001,time+0.04);
+    s.connect(hp); hp.connect(g); g.connect(this.master); s.start(time); s.stop(time+0.06);
+  }
+
+  scheduleStep(step,time){
+    const t=this.tracks[this.curr];
+    const sec16=(60/t.bpm)/4;
+    const note=t.bass[step];
+    if(note) this.playBass(this.parseNote(note),time,sec16*1.7);
+    if(t.kick[step]==='1') this.playKick(time);
+    if(t.hat[step]==='1') this.playHat(time);
+  }
+  scheduler(){
+    while(this.nextNoteTime < this.ctx.currentTime+0.12){
+      this.scheduleStep(this.step,this.nextNoteTime);
+      const t=this.tracks[this.curr];
+      this.nextNoteTime += (60/t.bpm)/4;
+      this.step=(this.step+1)%16;
+    }
+  }
+  startScheduler(){
+    this.step=0;
+    this.nextNoteTime=this.ctx.currentTime+0.06;
+    if(this.timer) clearInterval(this.timer);
+    this.timer=setInterval(()=>this.scheduler(),25);
+  }
+  startRaf(){
+    cancelAnimationFrame(this.raf);
+    const loop=()=>{ this.tick(); this.raf=requestAnimationFrame(loop); };
+    this.raf=requestAnimationFrame(loop);
+  }
+  tick(){
+    if(!this.ctx) return;
+    const t=this.tracks[this.curr];
+    const el=this.ctx.currentTime-this.startTime;
+    if(this.totalRef.current) this.totalRef.current.textContent=this.fmt(t.len);
+    if(el>=t.len){ this.next(); return; }
+    if(this.progressRef.current) this.progressRef.current.style.width=Math.min(100,el/t.len*100)+'%';
+    if(this.timeRef.current) this.timeRef.current.textContent=this.fmt(el);
+    if(this.analyser && this.vuRef.current){
+      this.analyser.getByteFrequencyData(this.freqData);
+      const bars=this.vuRef.current.children;
+      const n=bars.length;
+      for(let i=0;i<n;i++){
+        const v=this.freqData[i+1]/255;
+        bars[i].style.height=(6+v*v*94)+'%';
+      }
+    }
+  }
+
+  hardStop(){
+    if(this.timer){ clearInterval(this.timer); this.timer=null; }
+    cancelAnimationFrame(this.raf); this.raf=null;
+  }
+  fadeIn(){
+    if(!this.master) return;
+    const tg=this.state.muted?0.0001:Math.max(0.0002,this.state.volume);
+    try{
+      this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+      this.master.gain.setValueAtTime(0.0001,this.ctx.currentTime);
+      this.master.gain.exponentialRampToValueAtTime(tg,this.ctx.currentTime+0.45);
+    }catch(e){ this.master.gain.value=this.state.muted?0:this.state.volume; }
+  }
+  toggleMute(){
+    const muted=!this.state.muted;
+    this.setState({ muted });
+    if(this.master){ try{ this.master.gain.cancelScheduledValues(this.ctx.currentTime); }catch(e){} this.master.gain.value = muted?0:this.state.volume; }
+  }
+
+  play(i){
+    this.ensureAudio();
+    if(this.ctx.state==='suspended') this.ctx.resume();
+    this.curr = (i==null? (this.curr||0) : i);
+    this.startTime=this.ctx.currentTime;
+    this.startScheduler();
+    this.startRaf();
+    this.fadeIn();
+    this.setState({ playing:true, current:this.curr });
+  }
+  togglePlay(){
+    this.ensureAudio();
+    if(this.state.playing){
+      if(this.ctx) this.ctx.suspend();
+      this.hardStop();
+      this.setState({ playing:false });
+    } else {
+      if(this.startTime==null){ this.play(this.state.current); return; }
+      this.ctx.resume();
+      this.startScheduler();
+      this.startRaf();
+      this.fadeIn();
+      this.setState({ playing:true });
+    }
+  }
+  next(){ this.play(((this.curr||0)+1)%this.tracks.length); }
+  prev(){ this.play(((this.curr||0)-1+this.tracks.length)%this.tracks.length); }
+
+  setVolume(e){
+    const v=Math.max(0,Math.min(1,(+e.target.value)/100));
+    this.setState({ volume:v });
+    if(this.master && !this.state.muted) this.master.gain.value=v;
+  }
+
+  ago(ts){
+    const s=Math.floor((Date.now()-ts)/1000);
+    if(s<60) return 'just now';
+    if(s<3600) return Math.floor(s/60)+'m ago';
+    if(s<86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+
+  renderVals(){
+    const cur=this.tracks[this.state.current]||this.tracks[0];
+    const playing=this.state.playing;
+    const spinStyle={ position:'absolute', inset:0, fontSize:'30px', lineHeight:'30px', textAlign:'center', animation:'reel 1.7s linear infinite', animationPlayState: playing?'running':'paused' };
+    const tracks=this.tracks.map((t,i)=>{
+      const active=i===this.state.current;
+      const showEq=active&&playing;
+      return {
+        name:t.name, sub:t.sub, bpm:t.bpm, dur:this.fmt(t.len),
+        num:String(i+1).padStart(2,'0'),
+        select:()=>this.play(i),
+        showEq, notEq:!showEq,
+        rowStyle:{ cursor:'pointer', display:'flex', alignItems:'center', gap:'14px', padding:'13px 12px', borderBottom:'2px dashed #100e0c33', background: active?'#dfd6c2':'transparent', boxShadow: active?'inset 5px 0 0 #cc2326':'inset 5px 0 0 transparent' },
+      };
+    });
+    return {
+      currentName:cur.name,
+      currentMeta:(cur.bpm||0)+' bpm',
+      playLabel: playing? '❚❚ PAUSE' : '▶ PLAY',
+      spinStyle,
+      tracks,
+      vuBars:Array.from({length:16},(_,i)=>i),
+      volumePct:Math.round(this.state.volume*100),
+      setVolume:(e)=>this.setVolume(e),
+      togglePlay:()=>this.togglePlay(),
+      muted:this.state.muted,
+      muteLabel: this.state.muted? '✕ SOUND OFF — tap to enable' : '♪ SOUND ON ‼ — tap to silence',
+      muteBtnStyle:{ cursor:'pointer', width:'100%', marginTop:'10px', padding:'9px 0', fontFamily:"'Archivo Black',sans-serif", fontSize:'12px', letterSpacing:'0.5px', border:'3px solid #100e0c', background: this.state.muted?'#100e0c':'#dfd6c2', color: this.state.muted?'#cc2326':'#100e0c' },
+      toggleMute:()=>this.toggleMute(),
+      next:()=>this.next(),
+      prev:()=>this.prev(),
+      flip:()=>this.setState(s=>({flipped:!s.flipped})),
+      flipStyle:{ position:'relative', width:'100%', height:'100%', transition:'transform 0.6s', transformStyle:'preserve-3d', transform: this.state.flipped?'rotateY(180deg)':'rotateY(0deg)' },
+      progressRef:this.progressRef, timeRef:this.timeRef, totalRef:this.totalRef, vuRef:this.vuRef,
+    };
+  }
+}
+</script>
+</body>
+</html>
