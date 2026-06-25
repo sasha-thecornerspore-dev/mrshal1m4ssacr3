@@ -1,11 +1,14 @@
-/* ★MARSH‼★ — client backend (option #1: optimistic + background sync)
-   Same MarshDB API the pages already use — synchronous reads, instant writes —
-   but when a server URL is set it mirrors a Cloudflare Worker (marsh-worker.js):
+/* ★MARSH‼★ — client backend (awaited auth/post + synced reads)
+   Same MarshDB API the pages use. Reads are synchronous (from a local mirror);
+   when a server URL is set it mirrors a Cloudflare Worker (marsh-worker.js):
      • boot reads the local cache instantly, then pulls authoritative /state
-     • reads come from the local mirror (no awaiting, no page rewrites)
-     • writes apply optimistically, then sync in the background and reconcile
-     • a poll every few seconds picks up other people's changes
-   Leave SERVER = '' to run purely local (old behaviour, single-browser only).
+     • login / signup / post are ASYNC — they return a Promise that resolves
+       with the real server result (so wrong passwords etc. show true errors,
+       no optimistic bounce). Call sites await them.
+     • moderation / config writes stay optimistic and reconcile in the background
+     • a poll every few seconds (and on focus) picks up other people's changes
+   Leave SERVER = '' to run purely local (old behaviour, single-browser only);
+   in local mode the async methods resolve immediately.
    See DEPLOY.md to stand up the Worker and paste its URL below. */
 (function () {
   if (window.MarshDB) { return; }
@@ -154,43 +157,49 @@
       return { username: u.username, display: u.display || u.username, role: u.role, rank: rank(u), banned: isBanned(u), timedOut: isTimedOut(u), timeoutUntil: u.timeoutUntil || 0, bannedUntil: u.bannedUntil || 0, banReason: u.banReason || '' };
     },
 
+    // async: resolves with the real server result (no optimistic session). Local mode resolves immediately.
     signup: function (username, password) {
       username = (username || '').trim();
-      if (!/^[a-z0-9_]{3,18}$/i.test(username)) return { ok: false, error: 'username: 3–18 letters/numbers/_ only' };
-      if ((password || '').length < 4) return { ok: false, error: 'password must be 4+ characters' };
+      if (!/^[a-z0-9_]{3,18}$/i.test(username)) return Promise.resolve({ ok: false, error: 'username: 3–18 letters/numbers/_ only' });
+      if ((password || '').length < 4) return Promise.resolve({ ok: false, error: 'password must be 4+ characters' });
       var key = username.toLowerCase();
-      if (db.users[key]) return { ok: false, error: 'that username is taken' };
       if (!SERVER) {
+        if (db.users[key]) return Promise.resolve({ ok: false, error: 'that username is taken' });
         db.users[key] = { username: username, display: username, passHash: ph(username, password), role: 'user', created: now(), bannedUntil: 0, banReason: '', timeoutUntil: 0 };
-        db.session = key; commit(); return { ok: true };
+        db.session = key; commit(); return Promise.resolve({ ok: true });
       }
-      // optimistic: stub the user + session now, confirm with server
-      db.users[key] = { username: username, display: username, role: 'user', created: now(), bannedUntil: 0, banReason: '', timeoutUntil: 0 };
-      db.session = key; commit();
-      api('POST', '/auth/signup', { username: username, password: password }).then(function (r) {
-        if (r && r.ok && r.token) { TOKEN = r.token; saveToken(); if (r.user) db.users[key] = r.user; db.session = key; commit(); }
-        else { delete db.users[key]; db.session = null; setErr((r && r.error) || 'signup failed'); commit(); }
-      }).catch(function () { delete db.users[key]; db.session = null; setErr('network error — try again'); commit(); });
-      return { ok: true };
+      return api('POST', '/auth/signup', { username: username, password: password }).then(function (r) {
+        if (r && r.ok && r.token) { TOKEN = r.token; saveToken(); if (r.user) db.users[key] = r.user; db.session = key; commit(); return { ok: true }; }
+        return { ok: false, error: (r && r.error) || 'signup failed' };
+      }).catch(function () { return { ok: false, error: 'network error — try again' }; });
     },
     login: function (username, password) {
       var key = (username || '').trim().toLowerCase();
       if (!SERVER) {
         var u = db.users[key];
-        if (!u || u.passHash !== ph(u.username, password)) return { ok: false, error: 'wrong username or password' };
-        db.session = key; commit(); return { ok: true };
+        if (!u || u.passHash !== ph(u.username, password)) return Promise.resolve({ ok: false, error: 'wrong username or password' });
+        db.session = key; commit(); return Promise.resolve({ ok: true });
       }
-      // optimistic: enter the session, let the server confirm / bounce
-      db.session = key; commit();
-      api('POST', '/auth/login', { username: key, password: password }).then(function (r) {
-        if (r && r.ok && r.token) { TOKEN = r.token; saveToken(); if (r.user) db.users[key] = r.user; db.session = key; commit(); }
-        else { db.session = null; TOKEN = ''; saveToken(); setErr((r && r.error) || 'wrong username or password'); commit(); }
-      }).catch(function () { db.session = null; setErr('network error — try again'); commit(); });
-      return { ok: true };
+      return api('POST', '/auth/login', { username: key, password: password }).then(function (r) {
+        if (r && r.ok && r.token) { TOKEN = r.token; saveToken(); if (r.user) db.users[key] = r.user; db.session = key; commit(); return { ok: true }; }
+        return { ok: false, error: (r && r.error) || 'wrong username or password' };
+      }).catch(function () { return { ok: false, error: 'network error — try again' }; });
     },
     logout: function () {
       if (SERVER && TOKEN) { api('POST', '/auth/logout', {}).catch(function () {}); }
       db.session = null; TOKEN = ''; saveToken(); commit();
+    },
+    // async: change the logged-in user's password (verifies the current one).
+    changePassword: function (current, next) {
+      var u = me(); if (!u) return Promise.resolve({ ok: false, error: 'sign in first' });
+      if ((next || '').length < 4) return Promise.resolve({ ok: false, error: 'new password must be 4+ characters' });
+      if (!SERVER) {
+        if (u.passHash !== ph(u.username, current)) return Promise.resolve({ ok: false, error: 'current password is wrong' });
+        u.passHash = ph(u.username, next); commit(); return Promise.resolve({ ok: true });
+      }
+      return api('POST', '/auth/password', { current: current, next: next }).then(function (r) {
+        return (r && r.ok) ? { ok: true } : { ok: false, error: (r && r.error) || 'could not change password' };
+      }).catch(function () { return { ok: false, error: 'network error — try again' }; });
     },
 
     posts: function () {
@@ -203,19 +212,25 @@
           return { id: p.id, author: p.author, display: (au && au.display) || p.author, role: (au && au.role) || 'user', body: p.body, img: p.img || '', ts: p.ts, hidden: !!p.hidden };
         });
     },
+    // async: waits for the server then reconciles. Local mode resolves immediately.
     post: function (body, img) {
-      var u = me(); if (!u) return { ok: false, error: 'sign in to post' };
-      if (isBanned(u)) return { ok: false, error: 'you are banned: ' + (u.banReason || 'no reason given') };
-      if (isTimedOut(u)) return { ok: false, error: 'you are timed out for ' + Math.ceil((u.timeoutUntil - now()) / 60000) + ' more min' };
+      var u = me(); if (!u) return Promise.resolve({ ok: false, error: 'sign in to post' });
+      if (isBanned(u)) return Promise.resolve({ ok: false, error: 'you are banned: ' + (u.banReason || 'no reason given') });
+      if (isTimedOut(u)) return Promise.resolve({ ok: false, error: 'you are timed out for ' + Math.ceil((u.timeoutUntil - now()) / 60000) + ' more min' });
       body = (body || '').trim();
       img = (typeof img === 'string') ? img : '';
-      if (!body && !img) return { ok: false, error: 'say something or add a pic' };
-      if (body.length > 280) return { ok: false, error: 'keep it under 280 characters' };
-      if (img && img.length > 3500000) return { ok: false, error: 'image too big — try a smaller one' };
-      return mutate('post', { body: body, img: img }, function () {
-        db.posts.push({ id: uid(), author: u.username, body: body, img: img, ts: now(), hidden: false });
-        return { ok: true };
-      });
+      if (!body && !img) return Promise.resolve({ ok: false, error: 'say something or add a pic' });
+      if (body.length > 280) return Promise.resolve({ ok: false, error: 'keep it under 280 characters' });
+      if (img && img.length > 3500000) return Promise.resolve({ ok: false, error: 'image too big — try a smaller one' });
+      if (!SERVER) {
+        db.posts.push({ id: uid(), author: u.username, body: body, img: img, ts: now(), hidden: false }); commit();
+        return Promise.resolve({ ok: true });
+      }
+      return api('POST', '/mutate', { op: 'post', args: { body: body, img: img } }).then(function (r) {
+        if (r && r.state) adopt(r.state);
+        if (r && r.ok) return { ok: true };
+        return { ok: false, error: (r && r.error) || 'could not post' };
+      }).catch(function () { return { ok: false, error: 'network error — try again' }; });
     },
 
     // ---- moderation ----

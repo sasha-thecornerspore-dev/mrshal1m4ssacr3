@@ -14,6 +14,12 @@ The site keeps working **before** you do any of this: with no server URL set,
 
 ## 1. Install Wrangler (one time)
 
+> **Windows:** run these in **Command Prompt** or **PowerShell** (not bash) —
+> the commands are exactly the same, just hit Enter in your normal terminal.
+> Install [Node.js](https://nodejs.org) first if you don't have it (that gives
+> you `npm`). After `npm install -g`, close and reopen the terminal so `wrangler`
+> is found.
+
 ```bash
 npm install -g wrangler
 wrangler login          # opens the browser, authorizes your Cloudflare account
@@ -65,16 +71,16 @@ Or tell me and I'll add a password-change endpoint.)
 
 ---
 
-## How it behaves (option #1: optimistic + background sync)
+## How it behaves (awaited auth/post + synced reads)
 
-- **Reads** come from a local mirror, so pages render instantly — no awaiting,
-  no rewrites to existing screens.
-- **Posts and mod actions** apply immediately on screen, then sync to the Worker
-  in the background; the server's authoritative result reconciles a moment later.
+- **Reads** come from a local mirror, so pages render instantly.
+- **Login / signup / posting** wait for the server and show the *real* result —
+  a wrong password just shows "wrong username or password", no logged-in flicker.
+  The buttons show "… working" briefly while the request is in flight.
+- **Moderation & config changes** apply immediately on screen, then sync in the
+  background and reconcile with the server's authoritative result.
 - **Other people's changes** show up within a few seconds (the client polls
   `/state`, and on window focus).
-- **Login/signup** are verified by the server. Because the UI is optimistic, a
-  *wrong* password logs you in for a beat, then bounces back with an error.
 - **Passwords** are hashed server-side with PBKDF2 and never sent to other
   clients. Sessions are opaque bearer tokens kept in the Worker.
 

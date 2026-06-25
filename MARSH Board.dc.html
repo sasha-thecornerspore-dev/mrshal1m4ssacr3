@@ -108,7 +108,7 @@
       <div style="display:flex; gap:9px; align-items:flex-start;">
         <input value="{{ draft }}" onInput="{{ setDraft }}" onPaste="{{ onPaste }}" placeholder="leave a tag ★ (paste or attach a pic ‼)" maxLength="280" class="mb-in" style="flex:1;">
         <label style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#100e0c; background:#ece6d8; border:2px solid #100e0c; padding:8px 12px; white-space:nowrap;">★ PIC<input type="file" accept="image/*" onChange="{{ pickImg }}" style="display:none;"></label>
-        <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:2px solid #100e0c; padding:8px 16px;">POST</button>
+        <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:2px solid #100e0c; padding:8px 16px;">{{ postBtnLabel }}</button>
       </div>
       <sc-if value="{{ hasDraftImg }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex; align-items:flex-start; gap:9px;">
@@ -156,7 +156,7 @@
 class Component extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { ready:false, tab:'login', authU:'', authP:'', err:'', draft:'', draftImg:'', postErr:'', panelOpen:false, banReason:'' };
+    this.state = { ready:false, tab:'login', authU:'', authP:'', err:'', draft:'', draftImg:'', postErr:'', panelOpen:false, banReason:'', authBusy:false, postBusy:false };
   }
   componentDidMount(){ this.waitDB(0); }
   componentWillUnmount(){ if(this.unsub) this.unsub(); }
@@ -172,20 +172,21 @@ class Component extends DCLogic {
   }
   DB(){ return window.MarshDB; }
 
-  submitAuth(e){
+  async submitAuth(e){
     e.preventDefault();
-    const DB=this.DB(); if(!DB) return;
-    const r = this.state.tab==='signup' ? DB.signup(this.state.authU,this.state.authP) : DB.login(this.state.authU,this.state.authP);
-    // keep the username on optimistic submit so an async bounce lets them retry; clear the password only
-    if(r.ok) this.setState({ authP:'', err:'' });
-    else this.setState({ err:r.error });
+    const DB=this.DB(); if(!DB || this.state.authBusy) return;
+    this.setState({ authBusy:true, err:'' });
+    const r = await (this.state.tab==='signup' ? DB.signup(this.state.authU,this.state.authP) : DB.login(this.state.authU,this.state.authP));
+    if(r.ok) this.setState({ authU:'', authP:'', err:'', authBusy:false });
+    else this.setState({ err:r.error, authP:'', authBusy:false });
   }
-  submitPost(e){
+  async submitPost(e){
     e.preventDefault();
-    const DB=this.DB(); if(!DB) return;
-    const r=DB.post(this.state.draft, this.state.draftImg);
-    if(r.ok) this.setState({ draft:'', draftImg:'', postErr:'' });
-    else this.setState({ postErr:r.error });
+    const DB=this.DB(); if(!DB || this.state.postBusy) return;
+    this.setState({ postBusy:true, postErr:'' });
+    const r=await DB.post(this.state.draft, this.state.draftImg);
+    if(r.ok) this.setState({ draft:'', draftImg:'', postErr:'', postBusy:false });
+    else this.setState({ postErr:r.error, postBusy:false });
   }
   loadImageFile(file, cb){
     if(!file || !/^image\//.test(file.type||'')) return;
@@ -302,7 +303,7 @@ class Component extends DCLogic {
       authU:this.state.authU, authP:this.state.authP,
       setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}),
       submitAuth:(e)=>this.submitAuth(e),
-      authBtnLabel:this.state.tab==='signup'?'★ CREATE ACCOUNT':'★ LOG IN',
+      authBtnLabel:this.state.authBusy?'… working':(this.state.tab==='signup'?'★ CREATE ACCOUNT':'★ LOG IN'),
       hasErr:!!this.state.err, err:this.state.err,
 
       canCompose: loggedIn && !me.banned && !me.timedOut,
@@ -310,7 +311,7 @@ class Component extends DCLogic {
       draft:this.state.draft, setDraft:(e)=>this.setState({draft:e.target.value}),
       draftImg:this.state.draftImg, hasDraftImg:!!this.state.draftImg,
       pickImg:(e)=>this.pickImg(e), onPaste:(e)=>this.onPaste(e), clearImg:()=>this.setState({draftImg:''}),
-      submitPost:(e)=>this.submitPost(e),
+      submitPost:(e)=>this.submitPost(e), postBtnLabel:this.state.postBusy?'…':'POST',
       hasPostErr:!!this.state.postErr, postErr:this.state.postErr,
 
       banReason:this.state.banReason, setBanReason:(e)=>this.setState({banReason:e.target.value}),

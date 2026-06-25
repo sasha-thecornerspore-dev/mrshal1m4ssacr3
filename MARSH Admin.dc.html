@@ -51,7 +51,7 @@
           <input value="{{ authU }}" onInput="{{ setAuthU }}" placeholder="username" class="ad-in" autoComplete="off">
           <input value="{{ authP }}" onInput="{{ setAuthP }}" placeholder="password" type="password" class="ad-in">
           <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><div style="font-family:'VT323',monospace; font-size:15px; color:#cc2326;">‼ {{ err }}</div></sc-if>
-          <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:3px solid #ece6d8; padding:11px 0;">★ LOG IN</button>
+          <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:3px solid #ece6d8; padding:11px 0;">{{ authBtnLabel }}</button>
         </form>
         <div style="font-family:'VT323',monospace; font-size:13px; color:#6f675c; margin-top:12px;">demo owner: marsh / marsh · mod: voidkitten / meow</div>
       </div>
@@ -68,6 +68,20 @@
     <!-- PANELS -->
     <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex; flex-direction:column; gap:18px;">
+
+        <!-- ACCOUNT -->
+        <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #cc2326;">
+          <div style="background:#ece6d8; color:#100e0c; padding:10px 15px; font-family:'Archivo Black',sans-serif; font-size:15px;">⊕ ACCOUNT — change your password</div>
+          <div style="padding:15px;">
+            <div style="font-family:'VT323',monospace; font-size:15px; color:#9c948a; margin-bottom:11px;">signed in as <span style="color:#ece6d8;">@{{ myName }}</span> — pick something only you know (4+ characters).</div>
+            <form onSubmit="{{ submitPw }}" style="display:flex; gap:9px; flex-wrap:wrap; align-items:center;">
+              <input value="{{ pwCur }}" onInput="{{ setPwCur }}" placeholder="current password" type="password" class="ad-in" autoComplete="off" style="flex:1; min-width:150px;">
+              <input value="{{ pwNew }}" onInput="{{ setPwNew }}" placeholder="new password" type="password" class="ad-in" autoComplete="off" style="flex:1; min-width:150px;">
+              <button type="submit" style="cursor:pointer; font-family:'Archivo Black',sans-serif; font-size:13px; color:#ece6d8; background:#cc2326; border:2px solid #ece6d8; padding:9px 15px; white-space:nowrap;">{{ pwBtnLabel }}</button>
+            </form>
+            <sc-if value="{{ hasPwMsg }}" hint-placeholder-val="{{ false }}"><div style="font-family:'VT323',monospace; font-size:15px; color:{{ pwMsgColor }}; margin-top:10px;">{{ pwMsg }}</div></sc-if>
+          </div>
+        </section>
 
         <!-- PAGES -->
         <section style="border:3px solid #ece6d8; background:#100e0c; box-shadow:6px 6px 0 #ece6d8;">
@@ -212,7 +226,7 @@
 class Component extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { ready:false, authU:'', authP:'', err:'', banReason:'' };
+    this.state = { ready:false, authU:'', authP:'', err:'', banReason:'', authBusy:false, pwCur:'', pwNew:'', pwMsg:'', pwOk:false, pwBusy:false };
   }
   componentDidMount(){ this.waitDB(0); }
   componentWillUnmount(){ if(this.unsub) this.unsub(); }
@@ -228,12 +242,21 @@ class Component extends DCLogic {
     if(MS) return MS.ORDER.map(id=>({ id, label:MS.SKINS[id].label, hint:MS.SKINS[id].hint, swatch:MS.SKINS[id].swatch }));
     return [{id:'blood',label:'★ BLOOD',hint:'default',swatch:'#cc2326'}];
   }
-  submitAuth(e){
+  async submitPw(e){
     e.preventDefault();
-    const DB=this.DB(); if(!DB) return;
-    const r=DB.login(this.state.authU,this.state.authP);
-    if(r.ok) this.setState({ authU:'', authP:'', err:'' });
-    else this.setState({ err:r.error });
+    const DB=this.DB(); if(!DB || this.state.pwBusy) return;
+    this.setState({ pwBusy:true, pwMsg:'' });
+    const r=await DB.changePassword(this.state.pwCur, this.state.pwNew);
+    if(r.ok) this.setState({ pwCur:'', pwNew:'', pwMsg:'✓ password updated', pwOk:true, pwBusy:false });
+    else this.setState({ pwMsg:'‼ '+r.error, pwOk:false, pwBusy:false });
+  }
+  async submitAuth(e){
+    e.preventDefault();
+    const DB=this.DB(); if(!DB || this.state.authBusy) return;
+    this.setState({ authBusy:true, err:'' });
+    const r=await DB.login(this.state.authU,this.state.authP);
+    if(r.ok) this.setState({ authU:'', authP:'', err:'', authBusy:false });
+    else this.setState({ err:r.error, authP:'', authBusy:false });
   }
   badge(role){
     const base={ fontFamily:"'Archivo Black',sans-serif", fontSize:'9px', letterSpacing:'0.5px', padding:'2px 6px', textTransform:'uppercase' };
@@ -249,7 +272,7 @@ class Component extends DCLogic {
     const DB=this.DB();
     if(!this.state.ready || !DB){
       return { gated:true, isStaff:false, notStaff:false, loggedIn:false, hasErr:false, authU:this.state.authU, authP:this.state.authP,
-        setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}), submitAuth:(e)=>this.submitAuth(e), err:'', myBadgeStyle:{},
+        setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}), submitAuth:(e)=>this.submitAuth(e), err:'', authBtnLabel:'★ LOG IN', myBadgeStyle:{},
         pageRows:[], skinOpts:[], skinRows:[], userSkinRows:[], trackRows:[], userRows:[] };
     }
     const me=DB.me();
@@ -325,7 +348,11 @@ class Component extends DCLogic {
       logout:()=>DB.logout(),
       authU:this.state.authU, authP:this.state.authP,
       setAuthU:(e)=>this.setState({authU:e.target.value}), setAuthP:(e)=>this.setState({authP:e.target.value}),
-      submitAuth:(e)=>this.submitAuth(e), hasErr:!!this.state.err, err:this.state.err,
+      submitAuth:(e)=>this.submitAuth(e), hasErr:!!this.state.err, err:this.state.err, authBtnLabel:this.state.authBusy?'… working':'★ LOG IN',
+      pwCur:this.state.pwCur, pwNew:this.state.pwNew,
+      setPwCur:(e)=>this.setState({pwCur:e.target.value}), setPwNew:(e)=>this.setState({pwNew:e.target.value}),
+      submitPw:(e)=>this.submitPw(e), pwBtnLabel:this.state.pwBusy?'…':'★ UPDATE',
+      hasPwMsg:!!this.state.pwMsg, pwMsg:this.state.pwMsg, pwMsgColor:this.state.pwOk?'#7ac74f':'#cc2326',
 
       pageRows,
 

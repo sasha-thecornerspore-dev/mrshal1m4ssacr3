@@ -284,6 +284,21 @@ export default {
         return json({ ok: true });
       }
 
+      if (req.method === 'POST' && path === '/auth/password') {
+        const { current, next } = await req.json();
+        const db = await getDB(env);
+        const actor = userFromToken(db, bearer(req));
+        if (!actor) return json({ ok: false, error: 'sign in first' });
+        if ((next || '').length < 4) return json({ ok: false, error: 'new password must be 4+ characters' });
+        if (!(await verifyPassword(current, actor.passHash))) return json({ ok: false, error: 'current password is wrong' });
+        actor.passHash = await hashPassword(next);
+        // invalidate every other session for this user; keep the caller's token
+        const keep = bearer(req);
+        for (const tk of Object.keys(db.sessions)) { if (db.sessions[tk].user === actor.username.toLowerCase() && tk !== keep) delete db.sessions[tk]; }
+        await putDB(env, db);
+        return json({ ok: true });
+      }
+
       if (req.method === 'POST' && path === '/mutate') {
         const { op, args } = await req.json();
         const db = await getDB(env);
